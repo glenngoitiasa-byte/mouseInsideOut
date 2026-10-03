@@ -1,0 +1,10 @@
+.godot/
+
+export_presets.cfg
+
+.DS_Store
+Thumbs.db
+
+user://
+savegame.json
+savagame.bak
