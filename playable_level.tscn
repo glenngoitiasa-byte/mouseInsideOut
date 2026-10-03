@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://co1iuu6uoujx4"]
+
+[ext_resource type="Script" uid="uid://cm83m0rnstxat" path="res://PlayableLevel.gd" id="1_gpogn"]
+
+[node name="PlayableLevel" type="Control" unique_id=2025259810]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gpogn")
+
+[node name="MainHBox" type="HBoxContainer" parent="." unique_id=849209064]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftVBox" type="VBoxContainer" parent="MainHBox" unique_id=631611325]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 7.0
+
+[node name="MazeArea" type="PanelContainer" parent="MainHBox/LeftVBox" unique_id=131653085]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+
+[node name="LabelMazePlaceholder" type="Label" parent="MainHBox/LeftVBox/MazeArea" unique_id=1745226476]
+layout_mode = 2
+
+[node name="ConsoleContainer" type="PanelContainer" parent="MainHBox/LeftVBox" unique_id=2119514679]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="ConsoleLog" type="RichTextLabel" parent="MainHBox/LeftVBox/ConsoleContainer" unique_id=733717841]
+layout_mode = 2
+
+[node name="RightVBox" type="VBoxContainer" parent="MainHBox" unique_id=1413881431]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+
+[node name="CodeEditor" type="CodeEdit" parent="MainHBox/RightVBox" unique_id=526105294]
+layout_mode = 2
+size_flags_vertical = 3
+gutters_draw_line_numbers = true
+
+[node name="ControlsHBox" type="HBoxContainer" parent="MainHBox/RightVBox" unique_id=686628470]
+layout_mode = 2
+
+[node name="BtnExecute" type="Button" parent="MainHBox/RightVBox/ControlsHBox" unique_id=575215435]
+layout_mode = 2
+
+[node name="BtnStop" type="Button" parent="MainHBox/RightVBox/ControlsHBox" unique_id=683981029]
+layout_mode = 2
+
+[node name="BtnClear" type="Button" parent="MainHBox/RightVBox/ControlsHBox" unique_id=1491660792]
+layout_mode = 2
