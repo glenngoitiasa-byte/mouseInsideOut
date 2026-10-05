@@ -6,8 +6,11 @@ extends Control
 @onready var btn_execute: Button = $MainHBox/RightVBox/ControlsHBox/BtnExecute
 @onready var btn_stop: Button = $MainHBox/RightVBox/ControlsHBox/BtnStop
 @onready var btn_clear: Button = $MainHBox/RightVBox/ControlsHBox/BtnClear
+@onready var speed_slider: HSlider = $MainHBox/RightVBox/ControlsHBox/SpeedSlider
 
 var is_executing: bool = false
+var execution_start_time: float = 0.0
+const TIMEOUT_SECONDS: float = 120.0 # Timeout de 2 minutos (RQNF22)
 
 func _ready() -> void:
 	btn_execute.text = "Ejecutar"
@@ -19,10 +22,31 @@ func _ready() -> void:
 	btn_clear.pressed.connect(_on_btn_clear_pressed)
 	
 	console_log.scroll_following = true
-	append_console("[SISTEMA] Consola y Sandbox inicializados. Escribe tu código.")
+	append_console("[SISTEMA] Sistema de control de ejecución inicializado.")
 
 func append_console(message: String) -> void:
 	console_log.append_text(message + "\n")
+
+# Función invocada de forma asíncrona por el Sandbox
+func execute_action(action_name: String) -> void:
+	if not is_executing:
+		return
+
+	# Detección de Timeout de 2 minutos (RQNF22)
+	var elapsed_time = (Time.get_ticks_msec() - execution_start_time) / 1000.0
+	if elapsed_time > TIMEOUT_SECONDS:
+		append_console("[ERROR] La ejecución tardó demasiado, vuelve a intentarlo.")
+		_reset_execution_state()
+		return
+
+	# Cálculo de la duración de animación según velocidad slider (RQNF25)
+	var speed_modifier: float = speed_slider.value
+	var duration: float = 0.5 / speed_modifier # x1 -> 0.5s, x0.25 -> 2.0s, x3 -> 0.166s
+
+	append_console("[ACCION] " + action_name + " (Duración: " + str(snapped(duration, 0.01)) + "s)")
+
+	# Simulación de animación paso a paso con timer asíncrono
+	await get_tree().create_timer(duration).timeout
 
 # Evento: Botón Ejecutar
 func _on_btn_execute_pressed() -> void:
@@ -36,56 +60,52 @@ func _on_btn_execute_pressed() -> void:
 		
 	_compile_and_run(user_code)
 
-# Compilación e instanciación del código usando RefCounted y GDScript.new()
 func _compile_and_run(raw_code: String) -> void:
-	# 1. Bloquear el CodeEdit durante la ejecución (RQNF11)
 	is_executing = true
-	code_editor.editable = false
+	code_editor.editable = false # Bloquear editor durante ejecución (RQNF11)
+	execution_start_time = Time.get_ticks_msec()
 	append_console("[COMPILACIÓN] Analizando sintaxis...")
 
-	# 2. Construir la estructura completa de la clase en memoria
+	# Envolver el código dentro de una función asíncrona run()
 	var script_source: String = "extends PlayerSandbox\n\nfunc run():\n"
-	
-	# Indentar cada línea del usuario para dentro del método run()
 	var lines: PackedStringArray = raw_code.split("\n")
 	for line in lines:
-		script_source += "\t" + line + "\n"
+		# Convertir llamadas a las funciones expuestas en llamadas 'await'
+		var trimmed = line.strip_edges()
+		if trimmed.begins_with("avanzar()") or trimmed.begins_with("girar_izquierda()") or trimmed.begins_with("girar_derecha()"):
+			script_source += "\tawait " + line + "\n"
+		else:
+			script_source += "\t" + line + "\n"
 
-	# 3. Compilador nativo de Godot (RQNF21)
 	var dynamic_script: GDScript = GDScript.new()
 	dynamic_script.source_code = script_source
 	var err: Error = dynamic_script.reload()
 
-	# 4. Manejo de errores de sintaxis
 	if err != OK:
 		append_console("[ERROR SINTAXIS] Error de sintaxis. Revisa ':' al final de if/for/while, paréntesis cerrados y sangría consistente.")
 		_reset_execution_state()
 		return
 
-	# 5. Instanciación y ejecución en el sandbox aislado
-	append_console("[SISTEMA] Compilación exitosa. Iniciando sandbox...")
+	append_console("[SISTEMA] Iniciando simulación paso a paso...")
 	var sandbox_instance = dynamic_script.new(self)
 	
 	if sandbox_instance.has_method("run"):
-		sandbox_instance.run()
-		append_console("[ÉXITO] Código ejecutado con éxito.")
-	else:
-		append_console("[ERROR] No se pudo encontrar el punto de entrada 'run()'.")
-	await get_tree().create_timer(3.0).timeout
+		await sandbox_instance.run()
+		if is_executing:
+			append_console("[ÉXITO] Ejecución completada.")
+	
 	_reset_execution_state()
 
-# Restablecer el estado del editor
 func _reset_execution_state() -> void:
 	is_executing = false
-	code_editor.editable = true # El editor vuelve a ser editable (RQNF12)
+	code_editor.editable = true # Restablecer editor (RQNF12)
 
-# Evento: Botón Detener
+# Interrupción inmediata sin cerrar la pantalla (RQNF12)
 func _on_btn_stop_pressed() -> void:
 	if is_executing:
 		_reset_execution_state()
-		append_console("[AVISO] Ejecución interrumpida por el usuario.")
+		append_console("[AVISO] Ejecución detenida por el usuario.")
 
-# Evento: Botón Limpiar
 func _on_btn_clear_pressed() -> void:
 	if not is_executing:
 		code_editor.clear()
