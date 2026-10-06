@@ -8,69 +8,92 @@ extends Control
 @onready var btn_clear: Button = $MainHBox/RightVBox/ControlsHBox/BtnClear
 @onready var speed_slider: HSlider = $MainHBox/RightVBox/ControlsHBox/SpeedSlider
 
+# Referencias al personaje y mapa
+@onready var tilemap_layer: TileMapLayer = $MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/MazeNode/TileMapLayer
+@onready var mouse_character: MouseCharacter = $MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/MazeNode/MouseCharacter
+
 var is_executing: bool = false
 var execution_start_time: float = 0.0
-const TIMEOUT_SECONDS: float = 120.0 # Timeout de 2 minutos (RQNF22)
+var collision_count: int = 0 # Contador de choques (RQNF12)
+const TIMEOUT_SECONDS: float = 120.0
 
 func _ready() -> void:
-	btn_execute.text = "Ejecutar"
-	btn_stop.text = "Detener"
-	btn_clear.text = "Limpiar"
+	speed_slider.custom_minimum_size.x = 140
+	speed_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	btn_execute.pressed.connect(_on_btn_execute_pressed)
 	btn_stop.pressed.connect(_on_btn_stop_pressed)
 	btn_clear.pressed.connect(_on_btn_clear_pressed)
 	
 	console_log.scroll_following = true
-	append_console("[SISTEMA] Sistema de control de ejecución inicializado.")
+	
+	# Posicionar al ratón al inicio
+	if mouse_character:
+		mouse_character.grid_pos = Vector2i(1, 1)
+		mouse_character.update_world_position_instant()
 
 func append_console(message: String) -> void:
 	console_log.append_text(message + "\n")
 
-# Función invocada de forma asíncrona por el Sandbox
+# Ejecución asíncrona enviada desde el Sandbox
 func execute_action(action_name: String) -> void:
 	if not is_executing:
 		return
 
-	# Detección de Timeout de 2 minutos (RQNF22)
 	var elapsed_time = (Time.get_ticks_msec() - execution_start_time) / 1000.0
 	if elapsed_time > TIMEOUT_SECONDS:
-		append_console("[ERROR] La ejecución tardó demasiado, vuelve a intentarlo.")
+		append_console("[ERROR] Tiempo límite superado (2 minutos).")
 		_reset_execution_state()
 		return
 
-	# Cálculo de la duración de animación según velocidad slider (RQNF25)
-	var speed_modifier: float = speed_slider.value
-	var duration: float = 0.5 / speed_modifier # x1 -> 0.5s, x0.25 -> 2.0s, x3 -> 0.166s
+	var duration: float = 0.4 / speed_slider.value # Duración dinámica
 
-	append_console("[ACCION] " + action_name + " (Duración: " + str(snapped(duration, 0.01)) + "s)")
+	match action_name:
+		"avanzar":
+			var target_cell = mouse_character.get_facing_cell()
+			
+			# Comprobar colisión en TileMapLayer (si la celda tiene tile ID != -1 es pared)
+			if _is_wall(target_cell):
+				collision_count += 1
+				append_console("[COLISIÓN] ¡El ratón chocó contra una pared! Choques totales: " + str(collision_count))
+				# Pequeña pausa de impacto
+				await get_tree().create_timer(duration * 0.5).timeout
+			else:
+				append_console("[MOVIMIENTO] Avanzando a celda " + str(target_cell))
+				await mouse_character.move_to_grid(target_cell, duration)
 
-	# Simulación de animación paso a paso con timer asíncrono
-	await get_tree().create_timer(duration).timeout
+		"girar_izquierda":
+			append_console("[GIRO] Girando a la izquierda")
+			await mouse_character.turn(-90.0, duration)
 
-# Evento: Botón Ejecutar
+		"girar_derecha":
+			append_console("[GIRO] Girando a la derecha")
+			await mouse_character.turn(90.0, duration)
+
+# Verificación básica de colisión contra pared
+func _is_wall(cell_pos: Vector2i) -> bool:
+	if tilemap_layer:
+		# Si la celda en TileMapLayer no está vacía (source_id != -1), es pared
+		return tilemap_layer.get_cell_source_id(cell_pos) != -1
+	return false
+
 func _on_btn_execute_pressed() -> void:
 	if is_executing:
 		return
-		
 	var user_code: String = code_editor.text.strip_edges()
 	if user_code.is_empty():
 		append_console("[ERROR] El editor está vacío.")
 		return
-		
 	_compile_and_run(user_code)
 
 func _compile_and_run(raw_code: String) -> void:
 	is_executing = true
-	code_editor.editable = false # Bloquear editor durante ejecución (RQNF11)
+	code_editor.editable = false
 	execution_start_time = Time.get_ticks_msec()
-	append_console("[COMPILACIÓN] Analizando sintaxis...")
-
-	# Envolver el código dentro de una función asíncrona run()
+	
 	var script_source: String = "extends PlayerSandbox\n\nfunc run():\n"
 	var lines: PackedStringArray = raw_code.split("\n")
 	for line in lines:
-		# Convertir llamadas a las funciones expuestas en llamadas 'await'
 		var trimmed = line.strip_edges()
 		if trimmed.begins_with("avanzar()") or trimmed.begins_with("girar_izquierda()") or trimmed.begins_with("girar_derecha()"):
 			script_source += "\tawait " + line + "\n"
@@ -82,25 +105,22 @@ func _compile_and_run(raw_code: String) -> void:
 	var err: Error = dynamic_script.reload()
 
 	if err != OK:
-		append_console("[ERROR SINTAXIS] Error de sintaxis. Revisa ':' al final de if/for/while, paréntesis cerrados y sangría consistente.")
+		append_console("[ERROR SINTAXIS] Error en el código. Verifica la sintaxis.")
 		_reset_execution_state()
 		return
 
-	append_console("[SISTEMA] Iniciando simulación paso a paso...")
 	var sandbox_instance = dynamic_script.new(self)
-	
 	if sandbox_instance.has_method("run"):
 		await sandbox_instance.run()
 		if is_executing:
-			append_console("[ÉXITO] Ejecución completada.")
-	
+			append_console("[ÉXITO] Ejecución finalizada. Total de choques: " + str(collision_count))
+
 	_reset_execution_state()
 
 func _reset_execution_state() -> void:
 	is_executing = false
-	code_editor.editable = true # Restablecer editor (RQNF12)
+	code_editor.editable = true
 
-# Interrupción inmediata sin cerrar la pantalla (RQNF12)
 func _on_btn_stop_pressed() -> void:
 	if is_executing:
 		_reset_execution_state()

@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://co1iuu6uoujx4"]
 
 [ext_resource type="Script" uid="uid://cm83m0rnstxat" path="res://PlayableLevel.gd" id="1_gpogn"]
+[ext_resource type="PackedScene" uid="uid://0ogquyctvt2o" path="res://mouse_character.tscn" id="2_covbg"]
+
+[sub_resource type="TileSet" id="TileSet_wehc4"]
+tile_size = Vector2i(32, 32)
 
 [node name="PlayableLevel" type="Control" unique_id=2025259810]
 layout_mode = 3
@@ -31,6 +35,22 @@ size_flags_stretch_ratio = 8.0
 
 [node name="LabelMazePlaceholder" type="Label" parent="MainHBox/LeftVBox/MazeArea" unique_id=1745226476]
 layout_mode = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MainHBox/LeftVBox/MazeArea" unique_id=1999928419]
+layout_mode = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="MainHBox/LeftVBox/MazeArea/SubViewportContainer" unique_id=813756260]
+handle_input_locally = false
+size = Vector2i(803, 515)
+render_target_update_mode = 4
+
+[node name="Node2D" type="Node2D" parent="MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport" unique_id=1553148026]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D" unique_id=1143882307]
+tile_set = SubResource("TileSet_wehc4")
+
+[node name="MouseCharacteracter" parent="MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D" unique_id=1475647868 instance=ExtResource("2_covbg")]
 
 [node name="ConsoleContainer" type="PanelContainer" parent="MainHBox/LeftVBox" unique_id=2119514679]
 layout_mode = 2
