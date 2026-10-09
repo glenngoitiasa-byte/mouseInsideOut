@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://0ogquyctvt2o"]
-
-[node name="MouseCharacter" type="Node2D" unique_id=1475647868]
-
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=154413698]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=367603619]

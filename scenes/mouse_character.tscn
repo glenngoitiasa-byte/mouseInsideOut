@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://0ogquyctvt2o"]
+
+[ext_resource type="Texture2D" uid="uid://daonqcerlylw5" path="res://assets/sprites/Mouse-East.png" id="1_cwiyn"]
+[ext_resource type="Script" uid="uid://uo7rdqii2vv3" path="res://scripts/MouseCharacter.gd" id="1_f3ob8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hfxjt"]
+size = Vector2(14, 14)
+
+[node name="MouseCharacter" type="Node2D" unique_id=1475647868]
+script = ExtResource("1_f3ob8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=367603619]
+shape = SubResource("RectangleShape2D_hfxjt")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1638452380]
+rotation = -1.5707964
+texture = ExtResource("1_cwiyn")
