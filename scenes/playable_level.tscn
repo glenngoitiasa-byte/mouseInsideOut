@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://nu21u302rn1y" path="res://assets/sprites/wall-block.png" id="2_07dgv"]
 [ext_resource type="PackedScene" uid="uid://0ogquyctvt2o" path="res://scenes/mouse_character.tscn" id="2_7s1ja"]
 [ext_resource type="Texture2D" uid="uid://cq4nd5jtk7cv1" path="res://assets/sprites/floor-block.png" id="3_xl6wr"]
+[ext_resource type="PackedScene" uid="uid://dqaextxbocjs7" path="res://scenes/collectible.tscn" id="5_07dgv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rgu53"]
 texture = ExtResource("2_07dgv")
@@ -72,6 +73,8 @@ tile_set = SubResource("TileSet_pte0f")
 position = Vector2(33, 31)
 
 [node name="Collectibles" type="Node2D" parent="MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D" unique_id=1264621892]
+
+[node name="Collectible" parent="MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D/Collectibles" unique_id=1301690940 instance=ExtResource("5_07dgv")]
 
 [node name="ConsoleContainer" type="PanelContainer" parent="MainHBox/LeftVBox" unique_id=2119514679]
 layout_mode = 2
