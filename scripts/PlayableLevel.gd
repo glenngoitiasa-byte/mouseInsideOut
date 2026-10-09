@@ -30,8 +30,16 @@ var password_collected: Array[String] = []
 var level_state: String = "READY"
 
 func _ready() -> void:
+	# Configurar el rango del slider de velocidad según RQNF25 (x0.25 a x3.0)
+	speed_slider.min_value = 0.25
+	speed_slider.max_value = 3.0
+	speed_slider.step = 0.05
+	speed_slider.value = 1.0
 	speed_slider.custom_minimum_size.x = 140
 	speed_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	
+	# Conectar señal de cambio de velocidad en tiempo real
+	speed_slider.value_changed.connect(_on_speed_slider_value_changed)
 	
 	btn_execute.pressed.connect(_on_btn_execute_pressed)
 	btn_stop.pressed.connect(_on_btn_stop_pressed)
@@ -39,6 +47,10 @@ func _ready() -> void:
 	
 	console_log.scroll_following = true
 	_reset_to_entrance()
+
+func _on_speed_slider_value_changed(new_value: float) -> void:
+	if mouse_character != null:
+		mouse_character.set_speed_scale(new_value)
 
 func append_console(message: String) -> void:
 	console_log.append_text(message + "\n")
@@ -111,7 +123,7 @@ func execute_action(action_name: String):
 	if _check_timeout():
 		return
 
-	var duration: float = 0.4 / max(speed_slider.value, 0.1)
+	var speed_scale: float = max(speed_slider.value, 0.1)
 
 	match action_name:
 		"avanzar":
@@ -126,12 +138,11 @@ func execute_action(action_name: String):
 					append_console("[DERROTA] Demasiadas colisiones acumuladas.")
 					return
 				
-				await get_tree().create_timer(duration * 0.5).timeout
+				await get_tree().create_timer(0.2 / speed_scale).timeout
 			else:
 				append_console("[MOVIMIENTO] Avanzando a " + str(target_cell))
-				await mouse_character.move_to_grid(target_cell, duration)
+				await mouse_character.move_to_grid(target_cell, speed_scale)
 				
-				# Verificación de recolectables en la casilla alcanzada
 				_check_collectibles(target_cell)
 				
 				if target_cell == GOAL_CELL:
@@ -142,11 +153,11 @@ func execute_action(action_name: String):
 
 		"girar_izquierda":
 			append_console("[GIRO] Izquierda")
-			await mouse_character.turn(-90.0, duration)
+			await mouse_character.turn(-90.0, speed_scale)
 
 		"girar_derecha":
 			append_console("[GIRO] Derecha")
-			await mouse_character.turn(90.0, duration)
+			await mouse_character.turn(90.0, speed_scale)
 
 func _is_out_of_bounds(cell_pos: Vector2i) -> bool:
 	if tilemap_layer == null: return true
