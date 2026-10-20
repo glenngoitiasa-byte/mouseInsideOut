@@ -6,7 +6,7 @@ const START_CELL: Vector2i = Vector2i(1, 1)
 const START_DIR_INDEX: int = 1 # 1 = Este (Mirando a la derecha)
 const GOAL_CELL: Vector2i = Vector2i(1, 14) # Coordenada de la salida/queso
 const MAX_COLLISIONS: int = 5
-const TIMEOUT_SECONDS: float = 30.0
+const MAX_CONSOLE_LINES: int = 150
 
 # Referencias a nodos de UI
 @onready var code_editor: CodeEdit = $MainHBox/RightVBox/CodeEditor
@@ -28,6 +28,9 @@ var collision_count: int = 0
 var cheese_count: int = 0
 var password_collected: Array[String] = []
 var level_state: String = "READY"
+var step_count: int = 0
+var current_execution_id: int = 0
+var console_line_count: int = 0
 
 func _ready() -> void:
 	# Configurar el rango del slider de velocidad según RQNF25 (x0.25 a x3.0)
@@ -53,6 +56,17 @@ func _on_speed_slider_value_changed(new_value: float) -> void:
 		mouse_character.set_speed_scale(new_value)
 
 func append_console(message: String) -> void:
+	if console_log == null:
+		return
+		
+	console_line_count += 1
+	
+	# Evita el error 'Element limit reached' en RichTextLabel purgando el historial antiguo
+	if console_line_count > MAX_CONSOLE_LINES:
+		console_log.clear()
+		console_line_count = 1
+		console_log.append_text("[SISTEMA] Consola purgada automáticamente por límite de memoria.\n")
+		
 	console_log.append_text(message + "\n")
 
 # --- SENSORES (RQNF26, RQNF27) ---
@@ -105,22 +119,12 @@ func _reset_to_entrance() -> void:
 	if mouse_character != null:
 		mouse_character.reset_to_start(START_CELL, START_DIR_INDEX)
 	collision_count = 0
+	step_count = 0
 	level_state = "READY"
 	_reset_collectibles()
 
-func _check_timeout() -> bool:
-	var elapsed_time: float = (Time.get_ticks_msec() - execution_start_time) / 1000.0
-	if elapsed_time > TIMEOUT_SECONDS:
-		level_state = "GAME_OVER"
-		append_console("[TIEMPO AGOTADO] Se superó el límite de " + str(TIMEOUT_SECONDS) + " segundos.")
-		return true
-	return false
-
 func execute_action(action_name: String):
 	if not is_executing or mouse_character == null or level_state == "VICTORY" or level_state == "GAME_OVER":
-		return
-
-	if _check_timeout():
 		return
 
 	var speed_scale: float = max(speed_slider.value, 0.1)
@@ -140,6 +144,7 @@ func execute_action(action_name: String):
 				
 				await get_tree().create_timer(0.2 / speed_scale).timeout
 			else:
+				step_count += 1
 				append_console("[MOVIMIENTO] Avanzando a " + str(target_cell))
 				await mouse_character.move_to_grid(target_cell, speed_scale)
 				
@@ -152,10 +157,12 @@ func execute_action(action_name: String):
 					append_console("-------------------------------------------")
 
 		"girar_izquierda":
+			step_count += 1
 			append_console("[GIRO] Izquierda")
 			await mouse_character.turn(-90.0, speed_scale)
 
 		"girar_derecha":
+			step_count += 1
 			append_console("[GIRO] Derecha")
 			await mouse_character.turn(90.0, speed_scale)
 
@@ -180,9 +187,10 @@ func _on_btn_execute_pressed() -> void:
 	_compile_and_run(user_code)
 
 # res://scenes/PlayableLevel.gd (Añadir constante de nivel actual)
-@export var current_level_number: int = 2 # Nivel activo para filtrar instrucciones
+@export var current_level_number: int = 3 # Nivel activo para filtrar instrucciones
 
 func _compile_and_run(raw_code: String) -> void:
+	current_execution_id += 1 # Invalida cualquier corrutina previa que siga viva
 	is_executing = true
 	level_state = "RUNNING"
 	code_editor.editable = false
@@ -190,14 +198,12 @@ func _compile_and_run(raw_code: String) -> void:
 	
 	append_console("[SISTEMA] Validando código...")
 	
-	# 1. Validación sintáctica y filtro por nivel (AST)
 	var validation: CodeValidator.ValidationResult = CodeValidator.validate_code(raw_code, current_level_number)
 	if not validation.is_valid:
 		append_console("[ERROR SINTAXIS] Línea " + str(validation.line_number) + ": " + validation.error_message)
 		_reset_execution_state()
 		return
 
-	# 2. Construcción e inyección del script
 	var script_source: String = "extends PlayerSandbox\n\nfunc run():\n"
 	var lines: PackedStringArray = raw_code.split("\n")
 	
@@ -221,20 +227,21 @@ func _compile_and_run(raw_code: String) -> void:
 	var err: Error = dynamic_script.reload()
 
 	if err != OK:
-		append_console("[ERROR COMPILACIÓN] Error interno de sintaxis (GDScript " + str(err) + ").")
+		append_console("[ERROR SINTAXIS] Código no válido o estructura de bloques incorrecta.")
 		_reset_execution_state()
 		return
 
 	# 4. Instanciación y Ejecución Segura
-	var sandbox_instance = dynamic_script.new(self)
+	# Pasamos el ID de ejecución actual al Sandbox
+	var sandbox_instance = dynamic_script.new(self, current_execution_id)
 	if sandbox_instance.has_method("run"):
 		await sandbox_instance.run()
-		if is_executing and level_state == "RUNNING":
+		if is_executing and level_state == "RUNNING" and sandbox_instance.my_execution_id == current_execution_id:
 			append_console("[FIN] Código completado sin alcanzar la meta.")
-
 	_reset_execution_state()
 
 func _reset_execution_state() -> void:
+	current_execution_id += 1
 	is_executing = false
 	code_editor.editable = true
 
@@ -247,5 +254,7 @@ func _on_btn_stop_pressed() -> void:
 func _on_btn_clear_pressed() -> void:
 	if not is_executing:
 		code_editor.clear()
+		console_log.clear()
+		console_line_count = 0
 		append_console("[SISTEMA] Consola y editor limpiados.")
 		_reset_to_entrance()

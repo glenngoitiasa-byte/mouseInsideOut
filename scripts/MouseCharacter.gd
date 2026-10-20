@@ -29,7 +29,8 @@ func update_world_position_instant() -> void:
 	position = Vector2(grid_pos * TILE_SIZE) + Vector2(TILE_SIZE / 2.0, TILE_SIZE / 2.0)
 	rotation_degrees = current_dir_index * 90.0
 
-# Animación fluida de desplazamiento (Base: 0.5 s a velocidad x1)
+# res://scripts/MouseCharacter.gd
+
 func move_to_grid(target_grid_pos: Vector2i, speed_scale: float = 1.0) -> void:
 	kill_active_tween()
 	grid_pos = target_grid_pos
@@ -39,9 +40,10 @@ func move_to_grid(target_grid_pos: Vector2i, speed_scale: float = 1.0) -> void:
 	active_tween.set_speed_scale(max(speed_scale, 0.1))
 	active_tween.tween_property(self, "position", target_world_pos, 0.5)
 	
-	await active_tween.finished
+	# Si el tween fue destruido o no es válido, no hace await para no congelar el hilo
+	if active_tween != null and active_tween.is_valid():
+		await active_tween.finished
 
-# Animación de rotación (Base: 0.4 s a velocidad x1)
 func turn(degrees_change: float, speed_scale: float = 1.0) -> void:
 	kill_active_tween()
 	var target_rotation = rotation_degrees + degrees_change
@@ -50,7 +52,8 @@ func turn(degrees_change: float, speed_scale: float = 1.0) -> void:
 	active_tween.set_speed_scale(max(speed_scale, 0.1))
 	active_tween.tween_property(self, "rotation_degrees", target_rotation, 0.4)
 	
-	await active_tween.finished
+	if active_tween != null and active_tween.is_valid():
+		await active_tween.finished
 	
 	if degrees_change > 0:
 		current_dir_index = (current_dir_index + 1) % 4
@@ -68,3 +71,4 @@ func reset_to_start(start_pos: Vector2i, dir_index: int = 1) -> void:
 	grid_pos = start_pos
 	current_dir_index = dir_index
 	update_world_position_instant()
+	
