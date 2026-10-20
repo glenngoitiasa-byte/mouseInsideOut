@@ -179,14 +179,25 @@ func _on_btn_execute_pressed() -> void:
 	_reset_to_entrance()
 	_compile_and_run(user_code)
 
+# res://scenes/PlayableLevel.gd (Añadir constante de nivel actual)
+@export var current_level_number: int = 2 # Nivel activo para filtrar instrucciones
+
 func _compile_and_run(raw_code: String) -> void:
 	is_executing = true
 	level_state = "RUNNING"
 	code_editor.editable = false
 	execution_start_time = Time.get_ticks_msec()
 	
-	append_console("[SISTEMA] Iniciando ejecución...")
+	append_console("[SISTEMA] Validando código...")
 	
+	# 1. Validación sintáctica y filtro por nivel (AST)
+	var validation: CodeValidator.ValidationResult = CodeValidator.validate_code(raw_code, current_level_number)
+	if not validation.is_valid:
+		append_console("[ERROR SINTAXIS] Línea " + str(validation.line_number) + ": " + validation.error_message)
+		_reset_execution_state()
+		return
+
+	# 2. Construcción e inyección del script
 	var script_source: String = "extends PlayerSandbox\n\nfunc run():\n"
 	var lines: PackedStringArray = raw_code.split("\n")
 	
@@ -195,25 +206,26 @@ func _compile_and_run(raw_code: String) -> void:
 		if trimmed.is_empty():
 			continue
 		
-		# Extraer y normalizar la sangría del usuario (convierte 4 espacios a 1 tabulación)
 		var indent_len: int = line.length() - line.lstrip(" \t").length()
 		var leading_indent: String = line.left(indent_len).replace("    ", "\t")
 		
-		# Anteponer 'await' a las funciones asíncronas respetando la sangría exacta
+		# Inyección automática de await en comandos de movimiento
 		if trimmed.begins_with("avanzar") or trimmed.begins_with("girar_izquierda") or trimmed.begins_with("girar_derecha"):
 			script_source += "\t" + leading_indent + "await " + trimmed + "\n"
 		else:
 			script_source += "\t" + leading_indent + trimmed + "\n"
 
+	# 3. Compilador GDScript dinámico
 	var dynamic_script: GDScript = GDScript.new()
 	dynamic_script.source_code = script_source
 	var err: Error = dynamic_script.reload()
 
 	if err != OK:
-		append_console("[ERROR SINTAXIS] Error de compilación en el código.")
+		append_console("[ERROR COMPILACIÓN] Error interno de sintaxis (GDScript " + str(err) + ").")
 		_reset_execution_state()
 		return
 
+	# 4. Instanciación y Ejecución Segura
 	var sandbox_instance = dynamic_script.new(self)
 	if sandbox_instance.has_method("run"):
 		await sandbox_instance.run()
