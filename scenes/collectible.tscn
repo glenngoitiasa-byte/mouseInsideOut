@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dqaextxbocjs7"]
 
-[ext_resource type="Script" uid="uid://7yr1vher1m68" path="res://scenes/collectible.gd" id="1_1pg6c"]
+[ext_resource type="Script" uid="uid://7yr1vher1m68" path="res://scripts/collectible.gd" id="1_1pg6c"]
 [ext_resource type="Texture2D" uid="uid://8wbkd6q5r0lx" path="res://assets/sprites/cheese.png" id="1_bkg8t"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wehc4"]

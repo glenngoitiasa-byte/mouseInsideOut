@@ -1,0 +1,69 @@
+[gd_scene format=3 uid="uid://bxatagxyvkylm"]
+
+[ext_resource type="Script" uid="uid://b0kmom3686xef" path="res://scripts/LevelMap.gd" id="1_uex8f"]
+
+[node name="LevelMap" type="Control" unique_id=344719469]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_uex8f")
+
+[node name="Background" type="TextureRect" parent="." unique_id=1419251266]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PathLine" type="Line2D" parent="." unique_id=1695936885]
+
+[node name="TopBar" type="HBoxContainer" parent="." unique_id=1275988458]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="InfoPanel" type="PanelContainer" parent="." unique_id=1981867791]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBox" type="VBoxContainer" parent="InfoPanel" unique_id=1631698598]
+layout_mode = 2
+
+[node name="LabelTitle" type="Label" parent="InfoPanel/VBox" unique_id=1832379690]
+layout_mode = 2
+
+[node name="LabelDesc" type="Label" parent="InfoPanel/VBox" unique_id=1177447416]
+layout_mode = 2
+
+[node name="LabelStats" type="Label" parent="InfoPanel/VBox" unique_id=1195279250]
+layout_mode = 2
+
+[node name="LevelNodes" type="Node2D" parent="." unique_id=1530790574]
+
+[node name="LevelNode1" type="TextureButton" parent="LevelNodes" unique_id=894512008]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LevelNode2" type="TextureButton" parent="LevelNodes" unique_id=736506143]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LevelNode3" type="TextureButton" parent="LevelNodes" unique_id=1817455684]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LevelNode4" type="TextureButton" parent="LevelNodes" unique_id=1308731946]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MouseAvatar" type="Sprite2D" parent="." unique_id=1365263509]
+
+[node name="BtnStartLevel" type="Button" parent="." unique_id=665669062]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
