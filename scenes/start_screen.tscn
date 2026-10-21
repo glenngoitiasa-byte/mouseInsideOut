@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dphqpvsjyjecg"]
 
-[ext_resource type="Script" uid="uid://cp11h1wnlhffc" path="res://StartScreen.gd" id="1_tx5wa"]
+[ext_resource type="Script" uid="uid://cp11h1wnlhffc" path="res://scripts/StartScreen.gd" id="1_tx5wa"]
 
 [node name="StartScreen" type="Control" unique_id=642350378]
 layout_mode = 3
@@ -33,7 +33,7 @@ custom_minimum_size = Vector2(1000, 200)
 layout_mode = 2
 alignment = 1
 
-[node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer/VBoxContainer" unique_id=1166212585]
+[node name="LabelTitle" type="RichTextLabel" parent="CenterContainer/VBoxContainer" unique_id=1166212585]
 custom_minimum_size = Vector2(100, 125)
 layout_mode = 2
 theme_override_colors/default_color = Color(1, 1, 1, 1)

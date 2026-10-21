@@ -1,0 +1,77 @@
+[gd_scene format=3 uid="uid://dull85c74f1u2"]
+
+[ext_resource type="Script" uid="uid://dja1b83kxc1i5" path="res://scripts/MainMenu.gd" id="1_l6cm7"]
+
+[node name="MainMenu" type="Control" unique_id=2081925590]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_l6cm7")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1785401515]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12591085, 0.12591085, 0.12591082, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=615497696]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -480.0
+offset_top = -293.0
+offset_bottom = 284.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1000052659]
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelTitle" type="RichTextLabel" parent="CenterContainer/VBoxContainer" unique_id=1661436704]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 32
+text = "Mouse Inside Out"
+horizontal_alignment = 1
+
+[node name="Control" type="Control" parent="CenterContainer/VBoxContainer" unique_id=242671416]
+layout_mode = 2
+
+[node name="BtnPlay" type="Button" parent="CenterContainer/VBoxContainer" unique_id=944713112]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 21
+text = "Jugar"
+
+[node name="BtnCreation" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1930228392]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 21
+text = "Creación"
+
+[node name="BtnAchievements" type="Button" parent="CenterContainer/VBoxContainer" unique_id=2035800749]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 21
+text = "Logros"
+
+[node name="BtnSettings" type="Button" parent="CenterContainer/VBoxContainer" unique_id=720837003]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 21
+text = "Configuración"

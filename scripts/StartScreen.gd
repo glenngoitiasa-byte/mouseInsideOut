@@ -2,7 +2,7 @@
 extends Control
 
 # Ruta a la escena del menú principal (Pantalla 2)
-const MAIN_MENU_SCENE: String = "res://scenes/MainMenu.tscn"
+const MAIN_MENU_SCENE: String = "res://scenes/main_menu.tscn"
 
 @onready var label_prompt: Label = $CenterContainer/VBoxContainer/LabelPrompt
 
