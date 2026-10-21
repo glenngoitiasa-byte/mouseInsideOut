@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://cb1o7tqh1566a"]
+
+[node name="LevelSelect" type="Control" unique_id=209413847]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=255041407]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1194888855]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1419034093]
+layout_mode = 2
+text = "SELECCIONA UN NIVEL"
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/VBoxContainer" unique_id=2134534592]
+layout_mode = 2
+
+[node name="BtnLevel1" type="Button" parent="PanelContainer/VBoxContainer/GridContainer" unique_id=1070975862]
+layout_mode = 2
+
+[node name="BtnLevel2" type="Button" parent="PanelContainer/VBoxContainer/GridContainer" unique_id=920754788]
+layout_mode = 2
+
+[node name="BtnLevel3" type="Button" parent="PanelContainer/VBoxContainer/GridContainer" unique_id=83126530]
+layout_mode = 2
+
+[node name="BtnLevel4" type="Button" parent="PanelContainer/VBoxContainer/GridContainer" unique_id=658362473]
+layout_mode = 2
+
+[node name="BtnExit" type="Button" parent="PanelContainer/VBoxContainer" unique_id=956749130]
+layout_mode = 2
+text = "Salir del juego"

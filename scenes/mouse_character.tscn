@@ -15,3 +15,5 @@ shape = SubResource("RectangleShape2D_hfxjt")
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1638452380]
 rotation = -1.5707964
 texture = ExtResource("1_cwiyn")
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=807471237]

@@ -71,4 +71,3 @@ func reset_to_start(start_pos: Vector2i, dir_index: int = 1) -> void:
 	grid_pos = start_pos
 	current_dir_index = dir_index
 	update_world_position_instant()
-	
