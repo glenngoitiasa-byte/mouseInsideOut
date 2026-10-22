@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://n1ae8gbuwq8c"]
+
+[ext_resource type="Script" uid="uid://c6fu0631mfvgt" path="res://scenes/levels/LevelMapData.gd" id="1_m802k"]
+
+[node name="Level_01" type="Node2D" unique_id=17804324]
+script = ExtResource("1_m802k")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=460723809]
+
+[node name="Collectibles" type="Node2D" parent="." unique_id=1195999960]

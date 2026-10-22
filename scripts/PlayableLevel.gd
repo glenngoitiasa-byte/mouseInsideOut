@@ -2,9 +2,9 @@
 extends Control
 
 # Configuración de mapa
-const START_CELL: Vector2i = Vector2i(1, 1)
-const START_DIR_INDEX: int = 1 # 1 = Este (Mirando a la derecha)
-const GOAL_CELL: Vector2i = Vector2i(1, 14) # Coordenada de la salida/queso
+var START_CELL: Vector2i = Vector2i(1, 1)
+var START_DIR_INDEX: int = 1 # 1 = Este (Mirando a la derecha)
+var GOAL_CELL: Vector2i = Vector2i(1, 14) # Coordenada de la salida/queso
 const MAX_COLLISIONS: int = 5
 const MAX_CONSOLE_LINES: int = 150
 
@@ -17,9 +17,13 @@ const MAX_CONSOLE_LINES: int = 150
 @onready var speed_slider: HSlider = $MainHBox/RightVBox/ControlsHBox/SpeedSlider
 
 # Referencias a nodos de la escena
-@onready var tilemap_layer: TileMapLayer = $MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D/TileMapLayer
 @onready var mouse_character: MouseCharacter = $MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D/MouseCharacter
-@onready var collectibles_node: Node2D = $MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D/Collectibles
+@onready var map_container: Node2D = $MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D
+
+# Referencias dinámicas (Se asignan en runtime al cargar el nivel)
+var tilemap_layer: TileMapLayer = null
+var collectibles_node: Node2D = null
+var current_map_node: Node2D = null
 
 # Estado del nivel y Recolectables
 var is_executing: bool = false
@@ -31,6 +35,7 @@ var level_state: String = "READY"
 var step_count: int = 0
 var current_execution_id: int = 0
 var console_line_count: int = 0
+
 
 func _ready() -> void:
 	# Configurar el rango del slider de velocidad según RQNF25 (x0.25 a x3.0)
@@ -49,7 +54,36 @@ func _ready() -> void:
 	btn_clear.pressed.connect(_on_btn_clear_pressed)
 	
 	console_log.scroll_following = true
+	current_level_number = GlobalState.current_selected_level
+	_load_active_map()
 	_reset_to_entrance()
+
+func _load_active_map() -> void:
+	# 1. Limpiar mapa anterior si existe
+	if current_map_node != null:
+		current_map_node.queue_free()
+	
+	# 2. Cargar subescena correspondiente
+	var map_path: String = "res://scenes/levels/level_0" + str(current_level_number) + ".tscn"
+	if not ResourceLoader.exists(map_path):
+		append_console("[ERROR] No se encontró el recurso: " + map_path)
+		return
+		
+	var map_scene = load(map_path)
+	current_map_node = map_scene.instantiate()
+	
+	# 3. Insertar mapa antes del ratón para que quede en el fondo
+	map_container.add_child(current_map_node)
+	map_container.move_child(current_map_node, 0)
+	
+	# 4. Vincular referencias de TileMap, Collectibles y Coordenadas
+	tilemap_layer = current_map_node.get_node_or_null("TileMapLayer")
+	collectibles_node = current_map_node.get_node_or_null("Collectibles")
+	
+	if "start_cell" in current_map_node:
+		START_CELL = current_map_node.start_cell
+		START_DIR_INDEX = current_map_node.start_dir_index
+		GOAL_CELL = current_map_node.goal_cell
 
 func _on_speed_slider_value_changed(new_value: float) -> void:
 	if mouse_character != null:
