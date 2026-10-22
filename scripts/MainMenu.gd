@@ -2,7 +2,7 @@
 extends Control
 
 # Ruta a la siguiente pantalla (Mapa de Niveles)
-const LEVEL_MAP_SCENE: String = "res://scenes/LevelMap.tscn"
+const LEVEL_MAP_SCENE: String = "res://scenes/level_map.tscn"
 
 @onready var btn_play: Button = $CenterContainer/VBoxContainer/BtnPlay
 @onready var btn_creation: Button = $CenterContainer/VBoxContainer/BtnCreation

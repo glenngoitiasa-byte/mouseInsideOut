@@ -1,7 +1,7 @@
 # res://scenes/LevelMap.gd
 extends Control
 
-const PLAYABLE_LEVEL_SCENE = "res://scenes/PlayableLevel.tscn"
+const PLAYABLE_LEVEL_SCENE = "res://scenes/playable_level.tscn"
 
 # Referencias a UI
 @onready var label_title: Label = $InfoPanel/VBox/LabelTitle
