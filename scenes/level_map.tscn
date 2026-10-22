@@ -1,6 +1,11 @@
 [gd_scene format=3 uid="uid://bxatagxyvkylm"]
 
 [ext_resource type="Script" uid="uid://b0kmom3686xef" path="res://scripts/LevelMap.gd" id="1_uex8f"]
+[ext_resource type="Texture2D" uid="uid://daonqcerlylw5" path="res://assets/sprites/Mouse-East.png" id="2_4jybi"]
+[ext_resource type="Texture2D" uid="uid://bsn7sy5v102kt" path="res://assets/sprites/nv1.png" id="2_e7mj4"]
+[ext_resource type="Texture2D" uid="uid://qypvfuxaacl3" path="res://assets/sprites/nv2.png" id="3_28enl"]
+[ext_resource type="Texture2D" uid="uid://n0thhisiu301" path="res://assets/sprites/nv3.png" id="4_4mfww"]
+[ext_resource type="Texture2D" uid="uid://bpssklcajxm8b" path="res://assets/sprites/nv4.png" id="5_ublle"]
 
 [node name="LevelMap" type="Control" unique_id=344719469]
 layout_mode = 3
@@ -13,23 +18,48 @@ script = ExtResource("1_uex8f")
 
 [node name="Background" type="TextureRect" parent="." unique_id=1419251266]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PathLine" type="Line2D" parent="." unique_id=1695936885]
+z_index = 1
+points = PackedVector2Array(169, 585, 412, 518, 725, 562, 1014, 350, 468, 243, 980, 99)
+width = 8.0
+default_color = Color(0, 0, 0, 1)
 
 [node name="TopBar" type="HBoxContainer" parent="." unique_id=1275988458]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.20500001
+anchor_bottom = 0.09
+offset_left = 1.0
+offset_right = 44.83998
+offset_bottom = -0.3200035
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BtnBack" type="Button" parent="TopBar" unique_id=811369473]
+layout_mode = 2
+text = "Volver"
+
+[node name="BtnStats" type="Button" parent="TopBar" unique_id=510611810]
+layout_mode = 2
+text = "Estadisticas"
+
+[node name="BtnConf" type="Button" parent="TopBar" unique_id=801758389]
+layout_mode = 2
+text = "Configuracion"
 
 [node name="InfoPanel" type="PanelContainer" parent="." unique_id=1981867791]
+custom_maximum_size = Vector2(300, -1)
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 56.0
+offset_top = 69.0
+offset_right = 314.0
+offset_bottom = 391.0
 
 [node name="VBox" type="VBoxContainer" parent="InfoPanel" unique_id=1631698598]
 layout_mode = 2
@@ -45,25 +75,48 @@ layout_mode = 2
 
 [node name="LevelNodes" type="Node2D" parent="." unique_id=1530790574]
 
-[node name="LevelNode1" type="TextureButton" parent="LevelNodes" unique_id=894512008]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="LevelNode1" type="TextureButton" parent="LevelNodes" unique_id=631561374]
+offset_left = 395.0
+offset_top = 476.0
+offset_right = 435.0
+offset_bottom = 516.0
+texture_normal = ExtResource("2_e7mj4")
 
 [node name="LevelNode2" type="TextureButton" parent="LevelNodes" unique_id=736506143]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 742.0
+offset_top = 572.0
+offset_right = 782.0
+offset_bottom = 612.0
+texture_normal = ExtResource("3_28enl")
 
 [node name="LevelNode3" type="TextureButton" parent="LevelNodes" unique_id=1817455684]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 1033.0
+offset_top = 332.0
+offset_right = 1073.0
+offset_bottom = 372.0
+texture_normal = ExtResource("4_4mfww")
 
 [node name="LevelNode4" type="TextureButton" parent="LevelNodes" unique_id=1308731946]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 424.0
+offset_top = 216.0
+offset_right = 483.0
+offset_bottom = 266.0
+texture_normal = ExtResource("5_ublle")
 
 [node name="MouseAvatar" type="Sprite2D" parent="." unique_id=1365263509]
+position = Vector2(91, 508)
+texture = ExtResource("2_4jybi")
 
 [node name="BtnStartLevel" type="Button" parent="." unique_id=665669062]
-layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.071
+anchor_top = 0.522
+anchor_right = 0.25300002
+anchor_bottom = 0.582
+offset_left = 0.20800018
+offset_top = -0.25601196
+offset_right = -0.45602417
+offset_bottom = -3.1360168
+theme_override_font_sizes/font_size = 22
+text = "Iniciar Nivel"
