@@ -1,7 +1,10 @@
 [gd_scene format=3 uid="uid://co1iuu6uoujx4"]
 
 [ext_resource type="Script" uid="uid://cm83m0rnstxat" path="res://scripts/PlayableLevel.gd" id="1_pte0f"]
+[ext_resource type="Script" uid="uid://c6fu0631mfvgt" path="res://scenes/levels/LevelMapData.gd" id="2_07dgv"]
 [ext_resource type="PackedScene" uid="uid://0ogquyctvt2o" path="res://scenes/mouse_character.tscn" id="2_7s1ja"]
+[ext_resource type="PackedScene" uid="uid://chh2cukildyjp" path="res://scenes/level_random.tscn" id="4_xl6wr"]
+[ext_resource type="Script" uid="uid://5ra80rigqwc8" path="res://scenes/levels/RandomMazeGenerator.gd" id="5_rgu53"]
 
 [node name="PlayableLevel" type="Control" unique_id=2025259810]
 layout_mode = 3
@@ -43,9 +46,13 @@ size = Vector2i(803, 515)
 render_target_update_mode = 4
 
 [node name="Node2D" type="Node2D" parent="MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport" unique_id=1553148026]
+script = ExtResource("2_07dgv")
 
 [node name="MouseCharacter" parent="MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D" unique_id=1475647868 instance=ExtResource("2_7s1ja")]
 position = Vector2(33, 31)
+
+[node name="Level_Random" parent="MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D" unique_id=554386296 instance=ExtResource("4_xl6wr")]
+script = ExtResource("5_rgu53")
 
 [node name="ConsoleContainer" type="PanelContainer" parent="MainHBox/LeftVBox" unique_id=2119514679]
 layout_mode = 2

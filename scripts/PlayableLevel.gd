@@ -71,6 +71,12 @@ func _load_active_map() -> void:
 		
 	var map_scene = load(map_path)
 	current_map_node = map_scene.instantiate()
+	# Si es el laberinto aleatorio, le pasamos la semilla ANTES de añadirlo al árbol
+	if GlobalState.is_random_mode and current_map_node.has_method("generate_seeded_maze"):
+		current_map_node.generate_seeded_maze(GlobalState.current_seed)
+		
+	map_container.add_child(current_map_node)
+	# ... (resto del código) ...
 	
 	# 3. Insertar mapa antes del ratón para que quede en el fondo
 	map_container.add_child(current_map_node)

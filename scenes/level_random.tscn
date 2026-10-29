@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://chh2cukildyjp"]
+
+[ext_resource type="Script" uid="uid://5ra80rigqwc8" path="res://scenes/levels/RandomMazeGenerator.gd" id="1_oc1us"]
+
+[node name="Level_Random" type="Node2D" unique_id=554386296]
+script = ExtResource("1_oc1us")
