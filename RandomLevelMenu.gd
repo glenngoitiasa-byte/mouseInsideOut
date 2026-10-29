@@ -49,6 +49,22 @@ func _on_btn_generate_pressed() -> void:
 func _launch_level(seed_string: String) -> void:
 	var final_seed: int = seed_string.to_int() if seed_string.is_valid_int() else randi()
 	
+	# Leer tamaño
+	match option_size.selected:
+		0: # Pequeño
+			GlobalState.current_maze_width = 9
+			GlobalState.current_maze_height = 9
+		1: # Mediano
+			GlobalState.current_maze_width = 15
+			GlobalState.current_maze_height = 15
+		2: # Grande
+			GlobalState.current_maze_width = 21
+			GlobalState.current_maze_height = 21
+			
+	# Leer cantidad de quesos
+	var cheese_txt = input_cheese.text.strip_edges()
+	GlobalState.current_cheese_count = cheese_txt.to_int() if cheese_txt.is_valid_int() else 0
+	
 	GlobalState.is_random_mode = true
 	GlobalState.current_seed = final_seed
 	get_tree().change_scene_to_file(PLAYABLE_LEVEL_SCENE)
