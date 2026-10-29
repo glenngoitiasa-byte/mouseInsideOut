@@ -12,116 +12,242 @@ grow_vertical = 2
 script = ExtResource("1_pp2n8")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=724442019]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.22763368, 0.08738106, 1.2032688e-08, 1)
 
 [node name="TopBar" type="HBoxContainer" parent="." unique_id=1859949432]
 layout_mode = 0
-offset_right = 40.0
+offset_right = 324.0
 offset_bottom = 40.0
 
+[node name="VSeparator3" type="VSeparator" parent="TopBar" unique_id=1588772884]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
+
 [node name="BtnBack" type="Button" parent="TopBar" unique_id=1797152267]
+layout_mode = 2
+text = "Volver"
+
+[node name="VSeparator2" type="VSeparator" parent="TopBar" unique_id=1149708376]
+custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
 
 [node name="LabelTitle" type="Label" parent="TopBar" unique_id=2020236933]
 layout_mode = 2
+text = "Creación de niveles aleatorios"
 
 [node name="CardScroll" type="ScrollContainer" parent="." unique_id=1726735811]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -562.0
+offset_top = -270.0
+offset_right = 562.0
+offset_bottom = 104.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="CardHBox" type="HBoxContainer" parent="CardScroll" unique_id=1927692011]
+custom_minimum_size = Vector2(250, 370)
 layout_mode = 2
 
 [node name="CardTemplante" type="PanelContainer" parent="CardScroll/CardHBox" unique_id=1261012318]
+custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CardScroll/CardHBox/CardTemplante" unique_id=399281494]
 layout_mode = 2
 
+[node name="HSeparator5" type="HSeparator" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=794859632]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
 [node name="LabelName" type="Label" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=1565787228]
+layout_mode = 2
+text = "Nivel '' ''"
+
+[node name="HSeparator4" type="HSeparator" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=1903755933]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="HBoxScore" type="HBoxContainer" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=1593509482]
+custom_minimum_size = Vector2(100, 70)
+layout_mode = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxScore" unique_id=398581044]
+
+[node name="Label" type="Label" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxScore" unique_id=1423964927]
+layout_mode = 2
+
+[node name="HSeparator3" type="HSeparator" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=310466131]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="HBoxBadge" type="HBoxContainer" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=1132905921]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxBadge" unique_id=1433530339]
+
+[node name="Label" type="Label" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxBadge" unique_id=86749860]
+layout_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=404277965]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="LabelSeed" type="Label" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=1342223206]
 layout_mode = 2
+text = "Semilla"
 
 [node name="InputSeed" type="LineEdit" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=659309141]
 layout_mode = 2
 
-[node name="BtnPlay" type="Button" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=213448178]
+[node name="HSeparator" type="HSeparator" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=1633191313]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
+
+[node name="BtnPlay" type="Button" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=213448178]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "Jugar"
 
 [node name="HSeparator" type="HSeparator" parent="." unique_id=2137256213]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 4.0
+offset_left = 1.0
+offset_top = 431.0
+offset_right = 1149.0
+offset_bottom = 445.0
 
 [node name="GeneratorSection" type="HBoxContainer" parent="." unique_id=2061928541]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -575.0
+offset_top = -201.0
+offset_right = 578.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="VSeparator2" type="VSeparator" parent="GeneratorSection" unique_id=1901036490]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="GeneratorSection" unique_id=1313006996]
 layout_mode = 2
 
 [node name="LabelGen" type="Label" parent="GeneratorSection/VBoxContainer" unique_id=51418967]
 layout_mode = 2
+size_flags_horizontal = 4
+text = "Nuevo nivel"
 
 [node name="BtnGenerate" type="Button" parent="GeneratorSection/VBoxContainer" unique_id=268133702]
+custom_minimum_size = Vector2(200, 150)
+layout_mode = 2
+text = "+"
+
+[node name="VSeparator" type="VSeparator" parent="GeneratorSection" unique_id=968540104]
+custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
 
-[node name="GeneratorForm" type="GridContainer" parent="GeneratorSection" unique_id=1886303060]
+[node name="VBoxContainer3" type="VBoxContainer" parent="GeneratorSection" unique_id=1676144965]
 layout_mode = 2
 
-[node name="LabelName" type="Label" parent="GeneratorSection/GeneratorForm" unique_id=1693234432]
+[node name="VBoxContainer2" type="VBoxContainer" parent="GeneratorSection/VBoxContainer3" unique_id=958685833]
 layout_mode = 2
 
-[node name="InputName" type="LineEdit" parent="GeneratorSection/GeneratorForm" unique_id=278511696]
+[node name="LabelName" type="Label" parent="GeneratorSection/VBoxContainer3/VBoxContainer2" unique_id=1693234432]
+layout_mode = 2
+text = "Nombre del nivel"
+
+[node name="InputName" type="LineEdit" parent="GeneratorSection/VBoxContainer3/VBoxContainer2" unique_id=278511696]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+text = "Ingresa un nombre"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GeneratorSection/VBoxContainer3/VBoxContainer2" unique_id=523755703]
 layout_mode = 2
 
-[node name="ControlSpacer1" type="Control" parent="GeneratorSection/GeneratorForm" unique_id=2072242726]
+[node name="VBoxContainer" type="VBoxContainer" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer" unique_id=722122912]
 layout_mode = 2
 
-[node name="LabelSub" type="Label" parent="GeneratorSection/GeneratorForm" unique_id=1301043549]
+[node name="LabelSub" type="Label" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer/VBoxContainer" unique_id=1859458806]
+layout_mode = 2
+text = "Algoritmo de generación"
+
+[node name="OptionSub" type="OptionButton" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer/VBoxContainer" unique_id=553904183]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 
-[node name="OptionSub" type="OptionButton" parent="GeneratorSection/GeneratorForm" unique_id=1627856601]
+[node name="VSeparator" type="VSeparator" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer" unique_id=94579645]
 layout_mode = 2
 
-[node name="LabelSize" type="Label" parent="GeneratorSection/GeneratorForm" unique_id=15151832]
+[node name="VBoxContainer2" type="VBoxContainer" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer" unique_id=1824960764]
 layout_mode = 2
 
-[node name="OptionSize" type="OptionButton" parent="GeneratorSection/GeneratorForm" unique_id=571917925]
+[node name="LabelSeed" type="Label" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer/VBoxContainer2" unique_id=139711537]
+layout_mode = 2
+text = "Semilla"
+
+[node name="InputSeed" type="LineEdit" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer/VBoxContainer2" unique_id=1854333218]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 
-[node name="LabelSeed" type="Label" parent="GeneratorSection/GeneratorForm" unique_id=1630639472]
+[node name="VSeparator2" type="VSeparator" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer" unique_id=156390768]
 layout_mode = 2
 
-[node name="InputSeed" type="LineEdit" parent="GeneratorSection/GeneratorForm" unique_id=1460829573]
+[node name="VBoxContainer3" type="VBoxContainer" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer" unique_id=319571472]
 layout_mode = 2
 
-[node name="LabelKeywords" type="Label" parent="GeneratorSection/GeneratorForm" unique_id=1285719944]
+[node name="LabelSize" type="Label" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer/VBoxContainer3" unique_id=1988391223]
+layout_mode = 2
+text = "Tamaño del laberinto"
+
+[node name="OptionSize" type="OptionButton" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer/VBoxContainer3" unique_id=349335355]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 
-[node name="OptionKeywords" type="OptionButton" parent="GeneratorSection/GeneratorForm" unique_id=1052086472]
+[node name="HBoxContainer2" type="HBoxContainer" parent="GeneratorSection/VBoxContainer3/VBoxContainer2" unique_id=1500079022]
 layout_mode = 2
 
-[node name="LabelCheese" type="Label" parent="GeneratorSection/GeneratorForm" unique_id=714080841]
+[node name="VBoxContainer" type="VBoxContainer" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer2" unique_id=163089383]
 layout_mode = 2
 
-[node name="InputCheese" type="LineEdit" parent="GeneratorSection/GeneratorForm" unique_id=305184988]
+[node name="LabelCheese" type="Label" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer2/VBoxContainer" unique_id=281742488]
+layout_mode = 2
+text = "Cantidad de quesos"
+
+[node name="InputCheese" type="LineEdit" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer2/VBoxContainer" unique_id=275151501]
 layout_mode = 2
 
-[node name="CheckDark" type="CheckBox" parent="GeneratorSection/GeneratorForm" unique_id=1758678146]
+[node name="HBoxContainer" type="HBoxContainer" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer2" unique_id=757223255]
 layout_mode = 2
 
-[node name="CheckPassword" type="CheckBox" parent="GeneratorSection/GeneratorForm" unique_id=1896621121]
+[node name="CheckDark" type="CheckBox" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer2/HBoxContainer" unique_id=1337099733]
+layout_mode = 2
+text = "Nivel oscuro"
+
+[node name="CheckPassword" type="CheckBox" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer2/HBoxContainer" unique_id=1707260003]
+layout_mode = 2
+text = "Nivel contraseña"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer2" unique_id=1315905779]
+layout_mode = 2
+
+[node name="LabelKeywords" type="Label" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer2/VBoxContainer2" unique_id=1300389264]
+layout_mode = 2
+text = "Sentencias prohibidas"
+
+[node name="OptionKeywords" type="OptionButton" parent="GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer2/VBoxContainer2" unique_id=1846757523]
 layout_mode = 2

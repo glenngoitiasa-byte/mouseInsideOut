@@ -4,7 +4,6 @@
 [ext_resource type="Script" uid="uid://c6fu0631mfvgt" path="res://scenes/levels/LevelMapData.gd" id="2_07dgv"]
 [ext_resource type="PackedScene" uid="uid://0ogquyctvt2o" path="res://scenes/mouse_character.tscn" id="2_7s1ja"]
 [ext_resource type="PackedScene" uid="uid://chh2cukildyjp" path="res://scenes/level_random.tscn" id="4_xl6wr"]
-[ext_resource type="Script" uid="uid://5ra80rigqwc8" path="res://scenes/levels/RandomMazeGenerator.gd" id="5_rgu53"]
 
 [node name="PlayableLevel" type="Control" unique_id=2025259810]
 layout_mode = 3
@@ -52,7 +51,8 @@ script = ExtResource("2_07dgv")
 position = Vector2(33, 31)
 
 [node name="Level_Random" parent="MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D" unique_id=554386296 instance=ExtResource("4_xl6wr")]
-script = ExtResource("5_rgu53")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D/Level_Random" unique_id=611950622]
 
 [node name="ConsoleContainer" type="PanelContainer" parent="MainHBox/LeftVBox" unique_id=2119514679]
 layout_mode = 2

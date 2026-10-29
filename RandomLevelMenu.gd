@@ -1,23 +1,23 @@
 # res://scenes/RandomLevelMenu.gd
 extends Control
 
-const MAIN_MENU_SCENE: String = "res://scenes/MainMenu.tscn"
-const PLAYABLE_LEVEL_SCENE: String = "res://scenes/PlayableLevel.tscn"
+const MAIN_MENU_SCENE: String = "res://scenes/main_menu.tscn"
+const PLAYABLE_LEVEL_SCENE: String = "res://scenes/playable_level.tscn"
 
 # Referencias Top y Tarjetas
 @onready var btn_back: Button = $TopBar/BtnBack
-@onready var btn_play_template: Button = $CardsScroll/CardsHBox/CardTemplate/VBox/BtnPlay
-@onready var template_seed_input: LineEdit = $CardsScroll/CardsHBox/CardTemplate/VBox/InputSeed
+@onready var btn_play_template: Button = $CardScroll/CardHBox/CardTemplante/VBoxContainer/BtnPlay
+@onready var template_seed_input: LineEdit = $CardScroll/CardHBox/CardTemplante/VBoxContainer/InputSeed
 
 # Referencias Formulario de Generación
-@onready var btn_generate: Button = $GeneratorSection/VBoxGenerate/BtnGenerate
-@onready var input_name: LineEdit = $GeneratorSection/GeneratorForm/InputName
-@onready var option_algo: OptionButton = $GeneratorSection/GeneratorForm/OptionAlgo
-@onready var input_seed: LineEdit = $GeneratorSection/GeneratorForm/InputSeed
-@onready var option_size: OptionButton = $GeneratorSection/GeneratorForm/OptionSize
-@onready var input_cheese: LineEdit = $GeneratorSection/GeneratorForm/InputCheese
-@onready var check_dark: CheckBox = $GeneratorSection/GeneratorForm/CheckDark
-@onready var check_password: CheckBox = $GeneratorSection/GeneratorForm/CheckPassword
+@onready var btn_generate: Button = $GeneratorSection/VBoxContainer/BtnGenerate
+@onready var input_name: LineEdit = $GeneratorSection/VBoxContainer3/VBoxContainer2/InputName
+@onready var option_algo: OptionButton = $GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer/VBoxContainer/OptionSub
+@onready var input_seed: LineEdit = $GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer/VBoxContainer2/InputSeed
+@onready var option_size: OptionButton = $GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer/VBoxContainer3/OptionSize
+@onready var input_cheese: LineEdit = $GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer2/VBoxContainer/InputCheese
+@onready var check_dark: CheckBox = $GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer2/HBoxContainer/CheckDark
+@onready var check_password: CheckBox = $GeneratorSection/VBoxContainer3/VBoxContainer2/HBoxContainer2/HBoxContainer/CheckPassword
 
 func _ready() -> void:
 	btn_back.pressed.connect(_on_btn_back_pressed)
