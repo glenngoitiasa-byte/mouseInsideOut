@@ -62,27 +62,33 @@ func _load_active_map() -> void:
 	# 1. Limpiar mapa anterior si existe
 	if current_map_node != null:
 		current_map_node.queue_free()
+		current_map_node = null
 	
-	# 2. Cargar subescena correspondiente
-	var map_path: String = "res://scenes/levels/level_0" + str(current_level_number) + ".tscn"
+	# 2. Definir la ruta según el modo (Aleatorio o Historia)
+	var map_path: String = ""
+	if GlobalState.is_random_mode:
+		map_path = "res://scenes/levels/level_random.tscn"
+	else:
+		map_path = "res://scenes/levels/Level_0" + str(current_level_number) + ".tscn"
+		
 	if not ResourceLoader.exists(map_path):
 		append_console("[ERROR] No se encontró el recurso: " + map_path)
 		return
 		
+	# 3. Cargar e instanciar la subescena
 	var map_scene = load(map_path)
 	current_map_node = map_scene.instantiate()
-	# Si es el laberinto aleatorio, le pasamos la semilla ANTES de añadirlo al árbol
-	if GlobalState.is_random_mode and current_map_node.has_method("generate_seeded_maze"):
-		current_map_node.generate_seeded_maze(GlobalState.current_seed)
-		
-	map_container.add_child(current_map_node)
-	# ... (resto del código) ...
 	
-	# 3. Insertar mapa antes del ratón para que quede en el fondo
+	# 5. Insertar mapa en el contenedor y mandarlo al fondo
 	map_container.add_child(current_map_node)
 	map_container.move_child(current_map_node, 0)
 	
-	# 4. Vincular referencias de TileMap, Collectibles y Coordenadas
+	# 4. Generar laberinto ANTES de agregarlo a la pantalla (Solo aleatorios)
+	if GlobalState.is_random_mode and current_map_node.has_method("generate_seeded_maze"):
+		current_map_node.generate_seeded_maze(GlobalState.current_seed)
+		
+	
+	# 6. Vincular referencias de TileMap, Collectibles y Coordenadas
 	tilemap_layer = current_map_node.get_node_or_null("TileMapLayer")
 	collectibles_node = current_map_node.get_node_or_null("Collectibles")
 	

@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://chh2cukildyjp"]
+
+[ext_resource type="Script" uid="uid://5ra80rigqwc8" path="res://scenes/levels/RandomMazeGenerator.gd" id="1_oc1us"]
+[ext_resource type="Texture2D" uid="uid://nu21u302rn1y" path="res://assets/sprites/wall-block.png" id="2_ye5qd"]
+[ext_resource type="Texture2D" uid="uid://cq4nd5jtk7cv1" path="res://assets/sprites/floor-block.png" id="3_5bwxm"]
+[ext_resource type="Texture2D" uid="uid://cyxyjtntbr5me" path="res://assets/sprites/Entrance.png" id="4_rkj7n"]
+[ext_resource type="Texture2D" uid="uid://dbmqq8af784p" path="res://assets/sprites/Exit.png" id="5_1bm3x"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_if52y"]
+texture = ExtResource("2_ye5qd")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_d287q"]
+texture = ExtResource("3_5bwxm")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dgtvi"]
+texture = ExtResource("4_rkj7n")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ywi5u"]
+texture = ExtResource("5_1bm3x")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_b0bu4"]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_if52y")
+sources/1 = SubResource("TileSetAtlasSource_d287q")
+sources/2 = SubResource("TileSetAtlasSource_dgtvi")
+sources/3 = SubResource("TileSetAtlasSource_ywi5u")
+
+[node name="Level_Random" type="Node2D" unique_id=554386296]
+script = ExtResource("1_oc1us")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1476293059]
+tile_set = SubResource("TileSet_b0bu4")
