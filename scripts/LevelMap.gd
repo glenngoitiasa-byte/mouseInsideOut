@@ -1,6 +1,7 @@
 # res://scenes/LevelMap.gd
 extends Control
 
+const MAIN_MENU_SCENE: String = "res://scenes/main_menu.tscn"
 const PLAYABLE_LEVEL_SCENE = "res://scenes/playable_level.tscn"
 
 # Referencias a UI
@@ -8,6 +9,7 @@ const PLAYABLE_LEVEL_SCENE = "res://scenes/playable_level.tscn"
 @onready var label_desc: Label = $InfoPanel/VBox/LabelDesc
 @onready var label_stats: Label = $InfoPanel/VBox/LabelStats
 @onready var btn_start_level: Button = $BtnStartLevel
+@onready var btn_back: Button = $TopBar/BtnBack
 @onready var mouse_avatar: Node2D = $MouseAvatar
 
 # Referencia a las paradas/niveles
@@ -54,7 +56,7 @@ var levels_info: Dictionary = {
 
 func _ready() -> void:
 	btn_start_level.pressed.connect(_on_btn_start_level_pressed)
-	
+	var unlocked_max = SaveManager.current_save["history_levels_unlocked"]
 	# Conectar señales de click y hover a cada nodo de nivel
 	for idx in range(level_nodes.size()):
 		var level_num: int = idx + 1
@@ -121,3 +123,6 @@ func _on_btn_start_level_pressed() -> void:
 		return
 	GlobalState.current_selected_level = current_target_level
 	get_tree().change_scene_to_file(PLAYABLE_LEVEL_SCENE)
+
+func _on_btn_back_pressed() -> void:
+	get_tree().change_scene_to_file(MAIN_MENU_SCENE)

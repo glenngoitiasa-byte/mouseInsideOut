@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 GlobalState="*uid://b44bv51ja2u2g"
+SaveManager="*uid://dk78udqxj8uv2"
 
 [display]
 

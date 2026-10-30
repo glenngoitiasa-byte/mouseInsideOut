@@ -69,7 +69,7 @@ func _load_active_map() -> void:
 	if GlobalState.is_random_mode:
 		map_path = "res://scenes/levels/level_random.tscn"
 	else:
-		map_path = "res://scenes/levels/Level_0" + str(current_level_number) + ".tscn"
+		map_path = "res://scenes/levels/level_0" + str(current_level_number) + ".tscn"
 		
 	if not ResourceLoader.exists(map_path):
 		append_console("[ERROR] No se encontró el recurso: " + map_path)
@@ -202,6 +202,15 @@ func execute_action(action_name: String):
 					append_console("[¡VICTORIA!] ¡El ratón alcanzó la meta en " + str(target_cell) + "!")
 					append_console("-------------------------------------------")
 
+				# Solo guardamos progreso de historia si NO estamos en modo aleatorio
+				if not GlobalState.is_random_mode:
+				# Aquí asumo que tienes una variable local para los quesos recogidos en la partida
+					var quesos_obtenidos: int = 0 # Reemplaza con tu variable real de quesos
+					GlobalState.complete_history_level(current_level_number, quesos_obtenidos)
+					append_console("[SISTEMA] Progreso guardado automáticamente.")
+				else:
+					append_console("[SISTEMA] Nivel aleatorio completado.")
+
 		"girar_izquierda":
 			step_count += 1
 			append_console("[GIRO] Izquierda")
@@ -211,6 +220,8 @@ func execute_action(action_name: String):
 			step_count += 1
 			append_console("[GIRO] Derecha")
 			await mouse_character.turn(90.0, speed_scale)
+		
+			
 
 func _is_out_of_bounds(cell_pos: Vector2i) -> bool:
 	if tilemap_layer == null: return true
