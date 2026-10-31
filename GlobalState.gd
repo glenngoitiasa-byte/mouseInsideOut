@@ -18,3 +18,19 @@ func complete_history_level(level_num: int, cheeses_collected: int) -> void:
 	
 	# 3. Guardar en disco duro (genera JSON, SHA-256 y Backup)
 	SaveManager.save_game()
+
+# En res://scripts/GlobalState.gd
+
+func save_random_level_card(card_data: Dictionary) -> void:
+	var saved_cards: Array = SaveManager.current_save["random_levels_saved"]
+	
+	# Prevenir duplicados exactos (misma semilla y tamaño)
+	for card in saved_cards:
+		if str(card["seed"]) == str(card_data["seed"]) and card["size"] == card_data["size"]:
+			print("[SISTEMA] Esta tarjeta ya está en tu colección.")
+			return
+			
+	# Agregar y guardar
+	saved_cards.append(card_data)
+	SaveManager.save_game()
+	print("[SISTEMA] Tarjeta de nivel guardada correctamente.")
