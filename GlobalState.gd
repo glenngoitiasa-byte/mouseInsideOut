@@ -8,15 +8,24 @@ var current_maze_width: int = 15
 var current_maze_height: int = 15
 var current_cheese_count: int = 0
 
-func complete_history_level(level_num: int, cheeses_collected: int) -> void:
-	# 1. Desbloquear el siguiente nivel si es la primera vez que se pasa
+func complete_history_level(level_num: int, cheeses_collected: int, steps: int, rank: String) -> void:
 	if level_num >= SaveManager.current_save["history_levels_unlocked"]:
 		SaveManager.current_save["history_levels_unlocked"] = level_num + 1
 		
-	# 2. Actualizar estadísticas globales
 	SaveManager.current_save["player_stats"]["total_cheeses"] += cheeses_collected
 	
-	# 3. Guardar en disco duro (genera JSON, SHA-256 y Backup)
+	# Guardar estadísticas específicas del nivel
+	var best_scores = SaveManager.current_save["player_stats"]["best_scores"]
+	var lvl_key = str(level_num)
+	
+	# Si ya existía un registro, podrías comparar si el nuevo rango es mejor. 
+	# Por ahora, simplemente sobrescribimos con la victoria más reciente:
+	best_scores[lvl_key] = {
+		"rank": rank,
+		"steps": steps,
+		"cheeses": cheeses_collected
+	}
+	
 	SaveManager.save_game()
 
 # En res://scripts/GlobalState.gd

@@ -39,13 +39,17 @@ var current_map_node: Node2D = null
 var is_executing: bool = false
 var execution_start_time: float = 0.0
 var collision_count: int = 0
-var cheese_count: int = 0
+
 var password_collected: Array[String] = []
 var level_state: String = "READY"
 var step_count: int = 0
 var current_execution_id: int = 0
 var console_line_count: int = 0
 
+# Variables temporales para la ejecución actual evaluzación
+var run_collisions: int = 0
+var run_steps: int = 0
+var run_cheeses: int = 0
 
 func _ready() -> void:
 	# Configurar el rango del slider de velocidad según RQNF25 (x0.25 a x3.0)
@@ -206,15 +210,15 @@ func _check_collectibles(cell_pos: Vector2i) -> void:
 			if item_grid_pos == cell_pos:
 				item.visible = false # RQNF31: Oculta sprite al pasar sobre la celda
 				if item.has_meta("is_cheese") and item.get_meta("is_cheese"):
-					cheese_count += 1
-					append_console("[QUESO] ¡Queso recolectado! Total: " + str(cheese_count))
+					run_cheeses += 1
+					append_console("[QUESO] ¡Queso recolectado! Total: " + str(run_cheeses))
 				elif item.has_meta("char_val"):
 					var val: String = str(item.get_meta("char_val"))
 					password_collected.append(val)
 					append_console("[CONTRASEÑA] Letra recolectada: " + val)
 
 func _reset_collectibles() -> void:
-	cheese_count = 0
+	run_cheeses = 0
 	password_collected.clear()
 	if collectibles_node != null:
 		for item in collectibles_node.get_children():
@@ -225,6 +229,9 @@ func _reset_to_entrance() -> void:
 	if mouse_character != null:
 		mouse_character.reset_to_start(START_CELL, START_DIR_INDEX)
 	collision_count = 0
+	run_collisions = 0
+	run_steps = 0
+	run_cheeses = 0
 	step_count = 0
 	level_state = "READY"
 	_reset_collectibles()
@@ -240,7 +247,7 @@ func execute_action(action_name: String):
 			var target_cell = mouse_character.get_facing_cell()
 			
 			if _is_out_of_bounds(target_cell) or _is_wall(target_cell):
-				collision_count += 1
+				collision_count += 1 # Asegúrate de que el motor de calificaciones use esta variable
 				append_console("[COLISIÓN] Impacto en celda " + str(target_cell) + ". Total choques: " + str(collision_count))
 				
 				if collision_count >= MAX_COLLISIONS:
@@ -250,27 +257,40 @@ func execute_action(action_name: String):
 				
 				await get_tree().create_timer(0.2 / speed_scale).timeout
 			else:
-				step_count += 1
+				step_count += 1 # Asegúrate de que el motor de calificaciones use esta variable
 				append_console("[MOVIMIENTO] Avanzando a " + str(target_cell))
 				await mouse_character.move_to_grid(target_cell, speed_scale)
 				
-				_check_collectibles(target_cell)
+				_check_collectibles(target_cell) # Asumo que aquí sumas +1 a run_cheeses o cheese_count
 				
+				# === BLOQUE DE VICTORIA CORREGIDO ===
 				if target_cell == GOAL_CELL:
 					level_state = "VICTORY"
 					append_console("-------------------------------------------")
 					append_console("[¡VICTORIA!] ¡El ratón alcanzó la meta en " + str(target_cell) + "!")
 					append_console("-------------------------------------------")
 
-				# Solo guardamos progreso de historia si NO estamos en modo aleatorio
-				if not GlobalState.is_random_mode:
-				# Aquí asumo que tienes una variable local para los quesos recogidos en la partida
-					var quesos_obtenidos: int = 0 # Reemplaza con tu variable real de quesos
-					GlobalState.complete_history_level(current_level_number, quesos_obtenidos)
-					append_console("[SISTEMA] Progreso guardado automáticamente.")
-				else:
-					append_console("[SISTEMA] Nivel aleatorio completado.")
-
+					# Guardar progreso SOLO cuando tocamos la meta
+					if not GlobalState.is_random_mode:
+						# 1. Calcular las líneas de código activas
+						var active_lines: int = 0
+						for line in code_editor.text.split("\n"):
+							if line.strip_edges() != "": 
+								active_lines += 1
+								
+						# 2. Invocar al motor de calificaciones (Asegúrate de pasar collision_count y step_count)
+						var rank = GradingEngine.calculate_history_rank(
+							run_cheeses, current_map_node.max_cheeses, # Cambia run_cheeses por tu variable real
+							active_lines, current_map_node.ideal_lines,
+							step_count, current_map_node.ideal_steps,
+							collision_count
+						)
+						
+						append_console("[VICTORIA] Rango obtenido: " + rank)
+						GlobalState.complete_history_level(current_level_number, run_cheeses, step_count, rank)
+						append_console("[SISTEMA] Progreso guardado automáticamente.")
+					else:
+						append_console("[SISTEMA] Nivel aleatorio completado.")
 		"girar_izquierda":
 			step_count += 1
 			append_console("[GIRO] Izquierda")
@@ -279,9 +299,8 @@ func execute_action(action_name: String):
 		"girar_derecha":
 			step_count += 1
 			append_console("[GIRO] Derecha")
-			await mouse_character.turn(90.0, speed_scale)
+			await mouse_character.turn(90.0, speed_scale) 
 		
-			
 
 func _is_out_of_bounds(cell_pos: Vector2i) -> bool:
 	if tilemap_layer == null: return true
@@ -299,7 +318,9 @@ func _on_btn_execute_pressed() -> void:
 	if user_code.is_empty():
 		append_console("[ERROR] El editor está vacío.")
 		return
-	
+	run_collisions = 0
+	run_steps = 0
+	run_cheeses = 0
 	_reset_to_entrance()
 	_compile_and_run(user_code)
 
@@ -347,7 +368,7 @@ func _compile_and_run(raw_code: String) -> void:
 		append_console("[ERROR SINTAXIS] Código no válido o estructura de bloques incorrecta.")
 		_reset_execution_state()
 		return
-
+	
 	# 4. Instanciación y Ejecución Segura
 	# Pasamos el ID de ejecución actual al Sandbox
 	var sandbox_instance = dynamic_script.new(self, current_execution_id)
@@ -375,3 +396,24 @@ func _on_btn_clear_pressed() -> void:
 		console_line_count = 0
 		append_console("[SISTEMA] Consola y editor limpiados.")
 		_reset_to_entrance()
+
+func _check_win_condition(mouse_grid_pos: Vector2i) -> void:
+	if mouse_grid_pos == GOAL_CELL:
+		if not GlobalState.is_random_mode:
+			# Contar líneas no vacías del editor
+			var active_lines: int = 0
+			for line in code_editor.text.split("\n"):
+				if line.strip_edges() != "": active_lines += 1
+				
+			# Invocar al motor
+			# Invocar al motor
+			var rank = GradingEngine.calculate_history_rank(
+				run_cheeses, current_map_node.max_cheeses,
+				active_lines, current_map_node.ideal_lines,
+				run_steps, current_map_node.ideal_steps,
+				run_collisions
+			)
+			
+			append_console("[VICTORIA] Rango obtenido: " + rank)
+			# NUEVO: Enviar todos los datos
+			GlobalState.complete_history_level(current_level_number, run_cheeses, run_steps, rank)

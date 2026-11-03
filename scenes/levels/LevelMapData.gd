@@ -17,3 +17,11 @@ extends Node2D
 
 ## Palabras clave permitidas en el editor de código para este nivel (dejar vacío si no hay restricción)
 @export var allowed_keywords: Array[String] = []
+
+@export_group("Criterios de Calificación (Solo Historia)")
+## Líneas de código mínimas necesarias para una solución óptima
+@export var ideal_lines: int = 5 
+## Cantidad de pasos ('avanzar') de la ruta más corta posible
+@export var ideal_steps: int = 10 
+## Cantidad total de quesos instanciados en este nivel
+@export var max_cheeses: int = 3

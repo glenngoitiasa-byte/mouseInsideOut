@@ -81,13 +81,29 @@ func _ready() -> void:
 	_update_info_panel(1)
 
 # Actualiza la tarjeta de información lateral
+# Actualiza la tarjeta de información lateral leyendo el JSON real
 func _update_info_panel(level_num: int) -> void:
 	if not levels_info.has(level_num):
 		return
+		
 	var data = levels_info[level_num]
 	label_title.text = data["title"]
 	label_desc.text = data["desc"]
-	label_stats.text = "Récord pasos: " + str(data["best_steps"]) + "\nQuesos: " + str(data["cheeses"])
+	
+	# Extraer datos reales del SaveManager
+	var best_scores = SaveManager.current_save["player_stats"]["best_scores"]
+	var lvl_key = str(level_num)
+	
+	if best_scores.has(lvl_key):
+		var stats = best_scores[lvl_key]
+		# Asume que el total de quesos máximo sigue en tu diccionario original como string (ej. "3" en "3/3")
+		var total_quesos_str = data["cheeses"].split("/")[1] if "/" in data["cheeses"] else "?"
+		
+		label_stats.text = "Rango: " + stats.get("rank", "-") + "\nPasos: " + str(stats.get("steps", 0)) + "\nQuesos: " + str(stats.get("cheeses", 0)) + "/" + total_quesos_str
+	else:
+		# Nivel no completado aún
+		var total_quesos_str = data["cheeses"].split("/")[1] if "/" in data["cheeses"] else "?"
+		label_stats.text = "Rango: --\nPasos: --\nQuesos: 0/" + total_quesos_str
 
 func _preview_info(level_num: int) -> void:
 	if not is_moving:
