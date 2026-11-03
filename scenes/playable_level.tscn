@@ -65,6 +65,30 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 3.0
 
+[node name="HBoxContainer" type="HBoxContainer" parent="MainHBox/RightVBox" unique_id=503912054]
+layout_mode = 2
+
+[node name="Tab1" type="Button" parent="MainHBox/RightVBox/HBoxContainer" unique_id=1144291420]
+propagate_maximum_size = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1"
+
+[node name="Tab2" type="Button" parent="MainHBox/RightVBox/HBoxContainer" unique_id=389797277]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "2"
+
+[node name="Tab3" type="Button" parent="MainHBox/RightVBox/HBoxContainer" unique_id=570026889]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "3"
+
+[node name="Exit" type="Button" parent="MainHBox/RightVBox/HBoxContainer" unique_id=350980996]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Exit"
+
 [node name="CodeEditor" type="CodeEdit" parent="MainHBox/RightVBox" unique_id=526105294]
 layout_mode = 2
 size_flags_vertical = 3
@@ -100,3 +124,6 @@ min_value = 0.25
 max_value = 3.0
 step = 0.05
 value = 1.0
+
+[node name="ExitDialog" type="ConfirmationDialog" parent="." unique_id=2082860005]
+dialog_text = "¿De verdad deseas salir del nivel?"

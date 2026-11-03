@@ -56,6 +56,7 @@ var levels_info: Dictionary = {
 
 func _ready() -> void:
 	btn_start_level.pressed.connect(_on_btn_start_level_pressed)
+	btn_back.pressed.connect(_on_btn_back_pressed)
 	var unlocked_max = SaveManager.current_save["history_levels_unlocked"]
 	# Conectar señales de click y hover a cada nodo de nivel
 	for idx in range(level_nodes.size()):

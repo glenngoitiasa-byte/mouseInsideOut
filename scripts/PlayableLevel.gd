@@ -16,9 +16,19 @@ const MAX_CONSOLE_LINES: int = 150
 @onready var btn_clear: Button = $MainHBox/RightVBox/ControlsHBox/BtnClear
 @onready var speed_slider: HSlider = $MainHBox/RightVBox/ControlsHBox/SpeedSlider
 
+@onready var btn_tab1: Button = $MainHBox/RightVBox/HBoxContainer/Tab1
+@onready var btn_tab2: Button = $MainHBox/RightVBox/HBoxContainer/Tab2
+@onready var btn_tab3: Button = $MainHBox/RightVBox/HBoxContainer/Tab3
+@onready var btn_exit: Button = $MainHBox/RightVBox/HBoxContainer/Exit
+@onready var exit_dialog: ConfirmationDialog = $ExitDialog
+
 # Referencias a nodos de la escena
 @onready var mouse_character: MouseCharacter = $MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D/MouseCharacter
 @onready var map_container: Node2D = $MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D
+
+# Sistema de guardado en caché de las pestañas
+var saved_codes: Array = ["", "", ""]
+var current_tab_index: int = 0
 
 # Referencias dinámicas (Se asignan en runtime al cargar el nivel)
 var tilemap_layer: TileMapLayer = null
@@ -53,10 +63,60 @@ func _ready() -> void:
 	btn_stop.pressed.connect(_on_btn_stop_pressed)
 	btn_clear.pressed.connect(_on_btn_clear_pressed)
 	
+	# 1. Cargar códigos desde el disco
+	var loaded_codes = SaveManager.current_save.get("player_codes", ["", "", ""])
+	# Duplicamos el arreglo para editarlo de forma segura en este nivel
+	saved_codes = loaded_codes.duplicate() 
+	code_editor.text = saved_codes[current_tab_index]
+	
+	# 2. Conectar la señal para capturar cada pulsación de tecla
+	code_editor.text_changed.connect(_on_code_edit_text_changed)
+	
+	# Resto de conexiones...
+	btn_tab1.pressed.connect(func(): _switch_tab(0))
+	btn_tab2.pressed.connect(func(): _switch_tab(1))
+	btn_tab3.pressed.connect(func(): _switch_tab(2))
+	btn_exit.pressed.connect(_on_btn_exit_pressed)
+	exit_dialog.confirmed.connect(_on_exit_confirmed)
+	
+	_highlight_active_tab() # Resalta visualmente la pestaña inicial
+	
 	console_log.scroll_following = true
 	current_level_number = GlobalState.current_selected_level
 	_load_active_map()
 	_reset_to_entrance()
+
+# Mantener la RAM (saved_codes) actualizada mientras el jugador teclea
+func _on_code_edit_text_changed() -> void:
+	saved_codes[current_tab_index] = code_editor.text
+
+func _switch_tab(new_index: int) -> void:
+	if current_tab_index == new_index: return
+	
+	# Guardar en disco duro el progreso de los códigos antes de cambiar
+	SaveManager.current_save["player_codes"] = saved_codes
+	SaveManager.save_game()
+	
+	current_tab_index = new_index
+	code_editor.text = saved_codes[current_tab_index]
+	_highlight_active_tab()
+	print("[SISTEMA] Pestaña ", new_index + 1, " cargada.")
+
+func _highlight_active_tab() -> void:
+	btn_tab1.modulate = Color(1, 1, 1) if current_tab_index != 0 else Color(0.5, 1, 0.5)
+	btn_tab2.modulate = Color(1, 1, 1) if current_tab_index != 1 else Color(0.5, 1, 0.5)
+	btn_tab3.modulate = Color(1, 1, 1) if current_tab_index != 2 else Color(0.5, 1, 0.5)
+
+# Lógica del botón de salir
+func _on_btn_exit_pressed() -> void:
+	# Guardar en disco duro por si no cambió de pestaña antes de querer salir
+	SaveManager.current_save["player_codes"] = saved_codes
+	SaveManager.save_game()
+	exit_dialog.popup_centered()
+
+func _on_exit_confirmed() -> void:
+	# Regresar al menú principal o mapa
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 func _load_active_map() -> void:
 	# 1. Limpiar mapa anterior si existe

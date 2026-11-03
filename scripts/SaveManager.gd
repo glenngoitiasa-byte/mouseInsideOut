@@ -8,6 +8,7 @@ const SALT: String = "MouseInsideOut_2026_SecureKey!" # Semilla para hacer el ch
 var current_save: Dictionary = {
 	"history_levels_unlocked": 1,
 	"random_levels_saved": [],
+	"player_codes": ["", "", ""],
 	"player_stats": {
 		"total_cheeses": 0,
 		"best_scores": {}
@@ -80,6 +81,9 @@ func _read_save_file(path: String) -> bool:
 	var inner_json = JSON.new()
 	if inner_json.parse(loaded_data["data_string"]) == OK:
 		current_save = inner_json.data
+		# Retrocompatibilidad: Si es una partida vieja, le añadimos el arreglo vacío
+		if not current_save.has("player_codes"):
+			current_save["player_codes"] = ["", "", ""]
 		print("[SAVE] Partida cargada y validada correctamente.")
 		return true
 		
