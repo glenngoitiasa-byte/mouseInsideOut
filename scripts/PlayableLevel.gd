@@ -27,6 +27,8 @@ const MAX_CONSOLE_LINES: int = 150
 @onready var map_container: Node2D = $MainHBox/LeftVBox/MazeArea/SubViewportContainer/SubViewport/Node2D
 
 # Sistema de guardado en caché de las pestañas
+# Identificador único de nivel para la memoria de pestañas
+var level_key: String = ""
 var saved_codes: Array = ["", "", ""]
 var current_tab_index: int = 0
 
@@ -52,7 +54,30 @@ var run_steps: int = 0
 var run_cheeses: int = 0
 
 func _ready() -> void:
-	# Configurar el rango del slider de velocidad según RQNF25 (x0.25 a x3.0)
+	# 1. Obtener clave de nivel real
+	current_level_number = GlobalState.current_selected_level
+	if not GlobalState.is_random_mode:
+		level_key = "history_" + str(current_level_number)
+	else:
+		level_key = "random_" + str(GlobalState.current_seed)
+		
+	# 2. Garantizar que SaveManager tenga la estructura de diccionario correcta
+	if not SaveManager.current_save.has("player_codes") or typeof(SaveManager.current_save["player_codes"]) != TYPE_DICTIONARY:
+		SaveManager.current_save["player_codes"] = {}
+
+	# 3. Leer o inicializar las 3 pestañas del nivel activo
+	var all_codes: Dictionary = SaveManager.current_save["player_codes"]
+	if all_codes.has(level_key) and typeof(all_codes[level_key]) == TYPE_ARRAY:
+		saved_codes = all_codes[level_key].duplicate()
+	else:
+		saved_codes = ["", "", ""]
+		all_codes[level_key] = saved_codes.duplicate()
+		
+	# 4. Asignar explícitamente el texto de la pestaña activa al editor
+	current_tab_index = 0
+	code_editor.text = saved_codes[current_tab_index]
+	
+	# 5. Configurar UI y señales
 	speed_slider.min_value = 0.25
 	speed_slider.max_value = 3.0
 	speed_slider.step = 0.05
@@ -60,52 +85,53 @@ func _ready() -> void:
 	speed_slider.custom_minimum_size.x = 140
 	speed_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
-	# Conectar señal de cambio de velocidad en tiempo real
 	speed_slider.value_changed.connect(_on_speed_slider_value_changed)
-	
 	btn_execute.pressed.connect(_on_btn_execute_pressed)
 	btn_stop.pressed.connect(_on_btn_stop_pressed)
 	btn_clear.pressed.connect(_on_btn_clear_pressed)
 	
-	# 1. Cargar códigos desde el disco
-	var loaded_codes = SaveManager.current_save.get("player_codes", ["", "", ""])
-	# Duplicamos el arreglo para editarlo de forma segura en este nivel
-	saved_codes = loaded_codes.duplicate() 
-	code_editor.text = saved_codes[current_tab_index]
-	
-	# 2. Conectar la señal para capturar cada pulsación de tecla
 	code_editor.text_changed.connect(_on_code_edit_text_changed)
-	
-	# Resto de conexiones...
 	btn_tab1.pressed.connect(func(): _switch_tab(0))
 	btn_tab2.pressed.connect(func(): _switch_tab(1))
 	btn_tab3.pressed.connect(func(): _switch_tab(2))
 	btn_exit.pressed.connect(_on_btn_exit_pressed)
 	exit_dialog.confirmed.connect(_on_exit_confirmed)
 	
-	_highlight_active_tab() # Resalta visualmente la pestaña inicial
-	
+	_highlight_active_tab()
 	console_log.scroll_following = true
-	current_level_number = GlobalState.current_selected_level
+	
 	_load_active_map()
 	_reset_to_entrance()
 
+# Guarda el borrador actual en la memoria del disco para este nivel específico
+func _save_current_level_codes_to_disk() -> void:
+	# Actualizar la pestaña actual en memoria
+	saved_codes[current_tab_index] = code_editor.text
+	
+	# Asegurar diccionario en el SaveManager
+	if not SaveManager.current_save.has("player_codes") or typeof(SaveManager.current_save["player_codes"]) != TYPE_DICTIONARY:
+		SaveManager.current_save["player_codes"] = {}
+		
+	# Sobrescribir las 3 pestañas de este nivel específico y guardar en disco
+	SaveManager.current_save["player_codes"][level_key] = saved_codes.duplicate()
+	SaveManager.save_game()
+	print("[GUARDADO] Pestañas de ", level_key, " escritas en disco: ", saved_codes)
 # Mantener la RAM (saved_codes) actualizada mientras el jugador teclea
+
 func _on_code_edit_text_changed() -> void:
 	saved_codes[current_tab_index] = code_editor.text
 
 func _switch_tab(new_index: int) -> void:
 	if current_tab_index == new_index: return
 	
-	# Guardar en disco duro el progreso de los códigos antes de cambiar
-	SaveManager.current_save["player_codes"] = saved_codes
-	SaveManager.save_game()
+	# Guardar progreso en disco antes de cambiar de pestaña
+	_save_current_level_codes_to_disk()
 	
 	current_tab_index = new_index
 	code_editor.text = saved_codes[current_tab_index]
 	_highlight_active_tab()
-	print("[SISTEMA] Pestaña ", new_index + 1, " cargada.")
-
+	print("[SISTEMA] Pestaña ", new_index + 1, " cargada para nivel: ", level_key)
+	
 func _highlight_active_tab() -> void:
 	btn_tab1.modulate = Color(1, 1, 1) if current_tab_index != 0 else Color(0.5, 1, 0.5)
 	btn_tab2.modulate = Color(1, 1, 1) if current_tab_index != 1 else Color(0.5, 1, 0.5)
@@ -114,8 +140,7 @@ func _highlight_active_tab() -> void:
 # Lógica del botón de salir
 func _on_btn_exit_pressed() -> void:
 	# Guardar en disco duro por si no cambió de pestaña antes de querer salir
-	SaveManager.current_save["player_codes"] = saved_codes
-	SaveManager.save_game()
+	_save_current_level_codes_to_disk()
 	exit_dialog.popup_centered()
 
 func _on_exit_confirmed() -> void:
@@ -318,9 +343,16 @@ func _on_btn_execute_pressed() -> void:
 	if user_code.is_empty():
 		append_console("[ERROR] El editor está vacío.")
 		return
+		
+	# 1. Guardar el código en disco automáticamente al ejecutar
+	_save_current_level_codes_to_disk()
+	append_console("[SISTEMA] Código guardado correctamente.")
+	
+	# 2. Reiniciar contadores de la ejecución
 	run_collisions = 0
 	run_steps = 0
 	run_cheeses = 0
+	
 	_reset_to_entrance()
 	_compile_and_run(user_code)
 
