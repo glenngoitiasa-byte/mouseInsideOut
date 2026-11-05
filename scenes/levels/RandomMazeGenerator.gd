@@ -6,11 +6,11 @@ extends "res://scenes/levels/LevelMapData.gd"
 # Dimensiones del laberinto (Deben ser números IMPARES para que las paredes funcionen bien)
 @export var width: int = 15
 @export var height: int = 15
-@export var wall_source_id: int = 0
-@export var floor_source_id: int = 1
+@export var wall_source_id: int = 1
+@export var floor_source_id: int = 2
 # (Añade esto arriba con tus otros @export)
-@export var entrance_source_id: int = 2 # ID de tu tile de entrada
-@export var goal_source_id: int = 3 # ID de tu tile de salida
+@export var entrance_source_id: int = 3 # ID de tu tile de entrada
+@export var goal_source_id: int = 4 # ID de tu tile de salida
 @export var cheese_scene: PackedScene # Arrastra aquí tu escena Cheese.tscn en el Inspecto
 
 # Coordenadas en tu TileSet (Ajusta estos valores a tu atlas)
@@ -95,7 +95,7 @@ func _spawn_cheeses() -> void:
 	
 	_shuffle_array_with_rng(floor_cells)
 	
-	var max_cheeses = min(GlobalState.current_cheese_count, floor_cells.size())
+	max_cheeses = min(GlobalState.current_cheese_count, floor_cells.size())
 	for i in range(max_cheeses):
 		var cheese = cheese_scene.instantiate()
 		var map_pos = floor_cells[i]

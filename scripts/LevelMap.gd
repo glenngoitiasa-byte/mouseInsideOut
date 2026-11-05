@@ -136,6 +136,7 @@ func _move_mouse_to_level_instant(level_num: int) -> void:
 		mouse_avatar.global_position = levels_info[level_num]["pos"]
 
 func _on_btn_start_level_pressed() -> void:
+	GlobalState.is_random_mode = false
 	if is_moving:
 		return
 	GlobalState.current_selected_level = current_target_level

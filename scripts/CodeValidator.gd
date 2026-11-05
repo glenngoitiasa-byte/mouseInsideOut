@@ -32,15 +32,28 @@ class ValidationResult:
 	var error_message: String = ""
 	var line_number: int = -1
 
-static func validate_code(code: String, level_number: int) -> ValidationResult:
+static func validate_code(code: String, level_number: int, custom_allowed_tokens: Array[String] = []) -> ValidationResult:
 	var result = ValidationResult.new()
 	var lines = code.split("\n")
-	var allowed_tokens = get_allowed_tokens(level_number)
 	
 	var all_known_identifiers: Array[String] = []
 	all_known_identifiers.append_array(GAME_COMMANDS)
 	all_known_identifiers.append_array(GAME_SENSORS)
 	all_known_identifiers.append_array(GD_KEYWORDS)
+
+	# --- NUEVO: Determinar tokens permitidos según el modo ---
+	var allowed_tokens: Array = [] # <-- Cambiado a genérico para evitar el error
+	if GlobalState.is_random_mode:
+		if custom_allowed_tokens.is_empty():
+			allowed_tokens.assign(all_known_identifiers.duplicate()) # Permite todo si está vacío
+		else:
+			allowed_tokens.assign(custom_allowed_tokens) # Restringe a lo que diga el creador
+	else:
+		allowed_tokens.assign(get_allowed_tokens(level_number))
+
+	# Variables para rastrear las tabulaciones
+	var require_indent_next: bool = false
+	var last_indent: int = 0
 
 	for idx in range(lines.size()):
 		var line_num = idx + 1
@@ -51,7 +64,27 @@ static func validate_code(code: String, level_number: int) -> ValidationResult:
 		if trimmed.is_empty() or trimmed.begins_with("#"):
 			continue
 
-		# 1. Detección de "else if" (Sintaxis no válida en GDScript)
+		# --- NUEVO: Validar Tabulación (Evitar Crasheos) ---
+		var current_indent = 0
+		for i in range(raw_line.length()):
+			if raw_line[i] == "\t":
+				current_indent += 1
+			elif raw_line[i] == " ":
+				continue # Ignora espacios si mezclaron tab y espacio, pero la base es \t
+			else:
+				break
+
+		# Si la línea anterior terminaba en ':' y esta línea no tiene mayor tabulación
+		if require_indent_next and current_indent <= last_indent:
+			result.is_valid = false
+			result.line_number = line_num
+			result.error_message = "Falta tabulación. Recuerda usar 'Tab' para indentar el bloque dentro de la estructura."
+			return result
+
+		require_indent_next = trimmed.ends_with(":")
+		last_indent = current_indent
+
+		# 1. Detección de "else if"
 		if trimmed.begins_with("else if") or " else if " in trimmed:
 			result.is_valid = false
 			result.line_number = line_num
@@ -85,22 +118,19 @@ static func validate_code(code: String, level_number: int) -> ValidationResult:
 		
 		var words = clean_line.split(" ", false)
 		for word in words:
-			# Omitir números
 			if word.is_valid_int() or word.is_valid_float():
 				continue
 
-			# A. Verificar si la función o palabra EXISTE en el juego
 			if not all_known_identifiers.has(word):
 				result.is_valid = false
 				result.line_number = line_num
 				result.error_message = "La función o instrucción '" + word + "' no existe o está mal escrita."
 				return result
 
-			# B. Verificar si está PERMITIDA en el nivel actual
 			if not allowed_tokens.has(word):
 				result.is_valid = false
 				result.line_number = line_num
-				result.error_message = "La instrucción '" + word + "' no está permitida en el Nivel " + str(level_number) + "."
+				result.error_message = "La instrucción '" + word + "' no está permitida en este nivel."
 				return result
 
 	return result

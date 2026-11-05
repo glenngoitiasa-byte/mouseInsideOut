@@ -28,7 +28,30 @@ func complete_history_level(level_num: int, cheeses_collected: int, steps: int, 
 	
 	SaveManager.save_game()
 
-# En res://scripts/GlobalState.gd
+func complete_random_level(seed_value: int, cheeses: int, steps: int, lines: int, rank: String) -> void:
+	var level_key = "random_" + str(seed)
+	var stats = SaveManager.current_save["player_stats"]
+	
+	if not stats["best_scores"].has(level_key):
+		stats["best_scores"][level_key] = {
+			"rank": rank,
+			"best_steps": steps,
+			"best_lines": lines,
+			"max_cheeses": cheeses
+		}
+	else:
+		var current_record = stats["best_scores"][level_key]
+		# Actualizar récord de pasos si es menor
+		if steps < current_record["best_steps"]:
+			current_record["best_steps"] = steps
+		# Actualizar récord de líneas si es menor
+		if lines < current_record["best_lines"]:
+			current_record["best_lines"] = lines
+			
+		# Actualizar el rango solo si el nuevo es mejor (opcional según tu jerarquía)
+		current_record["rank"] = rank # Asume que el último jugado con éxito sobreescribe el rango actual
+		
+	SaveManager.save_game()
 
 func save_random_level_card(card_data: Dictionary) -> void:
 	var saved_cards: Array = SaveManager.current_save["random_levels_saved"]

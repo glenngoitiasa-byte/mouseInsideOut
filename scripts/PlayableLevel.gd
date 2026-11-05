@@ -261,6 +261,7 @@ func _reset_to_entrance() -> void:
 	level_state = "READY"
 	_reset_collectibles()
 
+
 func execute_action(action_name: String):
 	if not is_executing or mouse_character == null or level_state == "VICTORY" or level_state == "GAME_OVER":
 		return
@@ -294,28 +295,33 @@ func execute_action(action_name: String):
 					append_console("-------------------------------------------")
 					append_console("[¡VICTORIA!] ¡El ratón alcanzó la meta en " + str(target_cell) + "!")
 					append_console("-------------------------------------------")
+					
+					# 1. Calcular las líneas de código activas (sirve para ambos modos)
+					var active_lines: int = 0
+					for line in code_editor.text.split("\n"):
+						if line.strip_edges() != "": 
+							active_lines += 1
 
-					# Guardar progreso SOLO cuando tocamos la meta
 					if not GlobalState.is_random_mode:
-						# 1. Calcular las líneas de código activas
-						var active_lines: int = 0
-						for line in code_editor.text.split("\n"):
-							if line.strip_edges() != "": 
-								active_lines += 1
-								
-						# 2. Invocar al motor de calificaciones (Asegúrate de pasar collision_count y step_count)
 						var rank = GradingEngine.calculate_history_rank(
-							run_cheeses, current_map_node.max_cheeses, # Cambia run_cheeses por tu variable real
+							run_cheeses, current_map_node.max_cheeses,
 							active_lines, current_map_node.ideal_lines,
 							step_count, current_map_node.ideal_steps,
 							collision_count
 						)
-						
 						append_console("[VICTORIA] Rango obtenido: " + rank)
 						GlobalState.complete_history_level(current_level_number, run_cheeses, step_count, rank)
-						append_console("[SISTEMA] Progreso guardado automáticamente.")
+						append_console("[SISTEMA] Progreso de historia guardado.")
 					else:
-						append_console("[SISTEMA] Nivel aleatorio completado.")
+						# NUEVA LÓGICA: Nivel Aleatorio
+						var rank = GradingEngine.calculate_random_rank(
+							run_cheeses, current_map_node.max_cheeses, 
+							collision_count
+						)
+						append_console("[VICTORIA] Rango aleatorio obtenido: " + rank)
+						GlobalState.complete_random_level(GlobalState.current_seed, run_cheeses, step_count, active_lines, rank)
+						append_console("[SISTEMA] Récords de nivel aleatorio actualizados.")
+
 		"girar_izquierda":
 			step_count += 1
 			append_console("[GIRO] Izquierda")
@@ -368,7 +374,7 @@ func _compile_and_run(raw_code: String) -> void:
 	
 	append_console("[SISTEMA] Validando código...")
 	
-	var validation: CodeValidator.ValidationResult = CodeValidator.validate_code(raw_code, current_level_number)
+	var validation: CodeValidator.ValidationResult = CodeValidator.validate_code(raw_code, current_level_number, current_map_node.allowed_keywords)
 	if not validation.is_valid:
 		append_console("[ERROR SINTAXIS] Línea " + str(validation.line_number) + ": " + validation.error_message)
 		_reset_execution_state()

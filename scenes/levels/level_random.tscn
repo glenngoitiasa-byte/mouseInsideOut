@@ -29,10 +29,10 @@ texture_region_size = Vector2i(32, 32)
 
 [sub_resource type="TileSet" id="TileSet_b0bu4"]
 tile_size = Vector2i(32, 32)
-sources/0 = SubResource("TileSetAtlasSource_if52y")
-sources/1 = SubResource("TileSetAtlasSource_d287q")
-sources/2 = SubResource("TileSetAtlasSource_dgtvi")
-sources/3 = SubResource("TileSetAtlasSource_ywi5u")
+sources/4 = SubResource("TileSetAtlasSource_ywi5u")
+sources/3 = SubResource("TileSetAtlasSource_dgtvi")
+sources/2 = SubResource("TileSetAtlasSource_d287q")
+sources/1 = SubResource("TileSetAtlasSource_if52y")
 
 [node name="Level_Random" type="Node2D" unique_id=554386296]
 script = ExtResource("1_oc1us")

@@ -96,10 +96,6 @@ func _launch_level(seed_string: String) -> void:
 func _on_btn_back_pressed() -> void:
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
-# En res://scripts/RandomLevelMenu.gd (o donde controles este menú)
-
-# Asegúrate de tener la referencia a tu botón (ajusta la ruta según tu árbol de nodos)
-@onready var btn_save_card: Button = $Panel/BtnSaveCard 
 
 func _load_saved_cards() -> void:
 	# 1. Ocultar el molde original

@@ -36,3 +36,21 @@ static func calculate_history_rank(
 	elif score >= 60.0: return "B"
 	elif score >= 40.0: return "C"
 	else: return "D"
+
+static func calculate_random_rank(cheeses: int, max_cheeses: int, collisions: int) -> String:
+	var score: int = 100
+	
+	# Penalización por quesos faltantes (hasta -50 puntos si no recoge ninguno)
+	if max_cheeses > 0:
+		var missing_cheeses = max_cheeses - cheeses
+		var cheese_penalty = int((float(missing_cheeses) / float(max_cheeses)) * 50.0)
+		score -= cheese_penalty
+		
+	# Penalización por choques (-25 puntos por cada choque)
+	score -= (collisions * 25)
+	
+	if score >= 100: return "S"
+	elif score >= 75: return "A"
+	elif score >= 50: return "B"
+	elif score >= 25: return "C"
+	else: return "D"
