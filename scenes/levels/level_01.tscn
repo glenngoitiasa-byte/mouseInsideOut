@@ -7,32 +7,34 @@
 [ext_resource type="Texture2D" uid="uid://dbmqq8af784p" path="res://assets/sprites/Exit.png" id="5_t0hvh"]
 [ext_resource type="PackedScene" uid="uid://dqaextxbocjs7" path="res://scenes/collectible.tscn" id="6_50wog"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kfebt"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_50wog"]
 texture = ExtResource("2_qdh5e")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_r72dd"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1ey3t"]
 texture = ExtResource("3_50wog")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ijn0p"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_t0hvh"]
 texture = ExtResource("4_1ey3t")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jmes4"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kfebt"]
 texture = ExtResource("5_t0hvh")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_1uaqh"]
 tile_size = Vector2i(32, 32)
-sources/1 = SubResource("TileSetAtlasSource_kfebt")
-sources/2 = SubResource("TileSetAtlasSource_r72dd")
-sources/3 = SubResource("TileSetAtlasSource_ijn0p")
-sources/4 = SubResource("TileSetAtlasSource_jmes4")
+physics_layer_0/collision_layer = 1
+sources/1 = SubResource("TileSetAtlasSource_50wog")
+sources/2 = SubResource("TileSetAtlasSource_1ey3t")
+sources/3 = SubResource("TileSetAtlasSource_t0hvh")
+sources/4 = SubResource("TileSetAtlasSource_kfebt")
 
 [node name="Level_01" type="Node2D" unique_id=17804324]
 script = ExtResource("1_m802k")

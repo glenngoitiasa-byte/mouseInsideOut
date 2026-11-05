@@ -29,7 +29,7 @@ func complete_history_level(level_num: int, cheeses_collected: int, steps: int, 
 	SaveManager.save_game()
 
 func complete_random_level(seed_value: int, cheeses: int, steps: int, lines: int, rank: String) -> void:
-	var level_key = "random_" + str(seed)
+	var level_key = "random_" + str(seed_value)
 	var stats = SaveManager.current_save["player_stats"]
 	
 	if not stats["best_scores"].has(level_key):
