@@ -70,37 +70,56 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="LabelName" type="Label" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=1565787228]
+[node name="HBoxContainer" type="HBoxContainer" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=465155300]
+layout_mode = 2
+
+[node name="LabelName" type="Label" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxContainer" unique_id=1565787228]
 layout_mode = 2
 text = "Nivel '' ''"
+
+[node name="LabelRank" type="Label" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxContainer" unique_id=1075371893]
+layout_mode = 2
 
 [node name="HSeparator4" type="HSeparator" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=1903755933]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="HBoxScore" type="HBoxContainer" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=1593509482]
-custom_minimum_size = Vector2(100, 70)
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+
+[node name="LabelSteps" type="Label" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxScore" unique_id=1423964927]
 layout_mode = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxScore" unique_id=398581044]
-
-[node name="Label" type="Label" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxScore" unique_id=1423964927]
-layout_mode = 2
 
 [node name="HSeparator3" type="HSeparator" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=310466131]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="HBoxBadge" type="HBoxContainer" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=1132905921]
-custom_minimum_size = Vector2(0, 70)
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="LabelLines" type="Label" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxBadge" unique_id=86749860]
 layout_mode = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxBadge" unique_id=1433530339]
 
-[node name="Label" type="Label" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxBadge" unique_id=86749860]
+[node name="HSeparator2" type="HSeparator" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=404277965]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="HSeparator2" type="HSeparator" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=404277965]
+[node name="HBoxBadge2" type="HBoxContainer" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=2123204165]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="LabelCheeses" type="Label" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxBadge2" unique_id=1082485865]
+layout_mode = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer/HBoxBadge2" unique_id=306905464]
+
+[node name="HSeparator6" type="HSeparator" parent="CardScroll/CardHBox/CardTemplante/VBoxContainer" unique_id=1441222692]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 

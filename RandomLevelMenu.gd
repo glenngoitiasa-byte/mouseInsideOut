@@ -108,6 +108,7 @@ func _load_saved_cards() -> void:
 			
 	# 3. Leer los niveles guardados
 	var saved_levels: Array = SaveManager.current_save["random_levels_saved"]
+	var best_scores = SaveManager.current_save["player_stats"]["best_scores"]
 	
 	# 4. Generar una tarjeta por cada nivel
 	for level_data in saved_levels:
@@ -115,20 +116,42 @@ func _load_saved_cards() -> void:
 		card_hbox.add_child(new_card)
 		new_card.show()
 		
-		# Referencias internas de la nueva tarjeta clonada
+		# Referencias internas de la tarjeta clonada
 		var input_seed_card = new_card.get_node("VBoxContainer/InputSeed")
 		var btn_play = new_card.get_node("VBoxContainer/BtnPlay")
 		
-		# Opcional: Si agregas un Label para el título en tu escena, puedes llenarlo así:
-		if new_card.has_node("VBoxContainer/LabelName"):
-			new_card.get_node("VBoxContainer/LabelName").text = level_data["name"]
-			
+		# ¡AQUÍ ESTÁ LA CORRECCIÓN! Las rutas ahora son relativas a new_card
+		var label_pasos = new_card.get_node_or_null("VBoxContainer/HBoxScore/LabelSteps")
+		var label_lineas = new_card.get_node_or_null("VBoxContainer/HBoxBadge/LabelLines")
+		var label_quesos = new_card.get_node_or_null("VBoxContainer/HBoxBadge2/LabelCheeses")
+		var label_rango = new_card.get_node_or_null("VBoxContainer/HBoxContainer/LabelRank")
+		
 		# Llenar la semilla
 		if input_seed_card:
 			input_seed_card.text = str(level_data["seed"])
-			input_seed_card.editable = false # Evita que la modifiquen desde la tarjeta
+			input_seed_card.editable = false 
 			
-		# Conectar el botón "Jugar" a los datos específicos de esta tarjeta
+		# 5. Cargar Estadísticas y Récords
+		var level_key = "random_" + str(int(level_data["seed"]))
+		print("[MENU] Buscando llave: ", level_key, " | Guardadas: ", best_scores.keys())
+		
+		if best_scores.has(level_key):
+			var record = best_scores[level_key]
+			print("LEYENDO RÉCORD DE ", level_key, ": ", record)
+			if label_pasos: label_pasos.text = "Pasos: " + str(record["best_steps"])
+			if label_lineas: label_lineas.text = "Líneas: " + str(record["best_lines"])
+			if label_quesos: label_quesos.text = "Quesos: " + str(record["max_cheeses"])
+			if label_rango: 
+				label_rango.text = "Rango: " + str(record["rank"])
+				if record["rank"] == "S":
+					label_rango.modulate = Color(1, 0.8, 0) # Tinte dorado
+		else:
+			if label_pasos: label_pasos.text = "Pasos: --"
+			if label_lineas: label_lineas.text = "Líneas: --"
+			if label_quesos: label_quesos.text = "Quesos: --"
+			if label_rango: label_rango.text = "Rango: ?"
+			
+		# Conectar el botón "Jugar"
 		btn_play.pressed.connect(func(): _launch_saved_level(level_data))
 
 func _launch_saved_level(data: Dictionary) -> void:

@@ -437,21 +437,49 @@ func _on_btn_clear_pressed() -> void:
 
 func _check_win_condition(mouse_grid_pos: Vector2i) -> void:
 	if mouse_grid_pos == GOAL_CELL:
+		level_state = "VICTORY"
+		append_console("-------------------------------------------")
+		append_console("[¡VICTORIA!] ¡El ratón alcanzó la meta!")
+		append_console("-------------------------------------------")
+		
+		# Contar líneas no vacías en el editor
+		var active_lines: int = 0
+		for line in code_editor.text.split("\n"):
+			if line.strip_edges() != "": 
+				active_lines += 1
+
 		if not GlobalState.is_random_mode:
-			# Contar líneas no vacías del editor
-			var active_lines: int = 0
-			for line in code_editor.text.split("\n"):
-				if line.strip_edges() != "": active_lines += 1
-				
-			# Invocar al motor
-			# Invocar al motor
+			# --- MODO HISTORIA ---
 			var rank = GradingEngine.calculate_history_rank(
-				run_cheeses, current_map_node.max_cheeses,
-				active_lines, current_map_node.ideal_lines,
-				run_steps, current_map_node.ideal_steps,
-				run_collisions
+				run_cheeses, 
+				current_map_node.max_cheeses if "max_cheeses" in current_map_node else 0,
+				active_lines, 
+				current_map_node.ideal_lines if "ideal_lines" in current_map_node else 0,
+				step_count, 
+				current_map_node.ideal_steps if "ideal_steps" in current_map_node else 0,
+				collision_count
+			)
+			append_console("[VICTORIA] Rango obtenido: " + rank)
+			GlobalState.complete_history_level(current_level_number, run_cheeses, step_count, rank)
+			append_console("[SISTEMA] Progreso de historia guardado.")
+		else:
+			# --- MODO ALEATORIO ---
+			var max_c: int = current_map_node.max_cheeses if "max_cheeses" in current_map_node else GlobalState.current_cheese_count
+			
+			var rank = GradingEngine.calculate_random_rank(
+				run_cheeses, 
+				max_c, 
+				collision_count
 			)
 			
-			append_console("[VICTORIA] Rango obtenido: " + rank)
-			# NUEVO: Enviar todos los datos
-			GlobalState.complete_history_level(current_level_number, run_cheeses, run_steps, rank)
+			append_console("[VICTORIA] Rango aleatorio obtenido: " + rank)
+			
+			# ¡Llamada directa al guardado de récords aleatorios!
+			GlobalState.complete_random_level(
+				GlobalState.current_seed, 
+				run_cheeses, 
+				step_count, 
+				active_lines, 
+				rank
+			)
+			append_console("[SISTEMA] Récords de nivel aleatorio guardados en disco.")
