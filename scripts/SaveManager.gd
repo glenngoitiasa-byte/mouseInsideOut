@@ -5,13 +5,23 @@ const BACKUP_PATH: String = "user://savegame.bak"
 const SALT: String = "MouseInsideOut_2026_SecureKey!" # Semilla para hacer el checksum irrepetible
 
 # Estructura base de los datos de guardado
+# Estructura base de los datos de guardado
 var current_save: Dictionary = {
 	"history_levels_unlocked": 1,
 	"random_levels_saved": [],
-	"player_codes": {}, # <--- Cambiado a Diccionario para soportar claves por nivel
+	"player_codes": {}, 
 	"player_stats": {
 		"total_cheeses": 0,
-		"best_scores": {}
+		"best_scores": {},
+		# --- NUEVAS VARIABLES DE LOGROS ---
+		"achievements": [],
+		"random_wins": 0,
+		"random_s_ranks": 0,
+		"bronze_wins": 0,
+		"silver_wins": 0,
+		"gold_wins": 0,
+		"dark_mode_wins": 0,
+		"password_wins": 0
 	}
 }
 
@@ -81,9 +91,23 @@ func _read_save_file(path: String) -> bool:
 	var inner_json = JSON.new()
 	if inner_json.parse(loaded_data["data_string"]) == OK:
 		current_save = inner_json.data
-		# Retrocompatibilidad: Si es una partida vieja, le añadimos el arreglo vacío
+		# Retrocompatibilidad: Si es una partida vieja, le añadimos las nuevas llaves
 		if not current_save.has("player_codes"):
 			current_save["player_codes"] = {}
+			
+		if not current_save.has("player_stats"):
+			current_save["player_stats"] = {"total_cheeses": 0, "best_scores": {}}
+			
+		var stats = current_save["player_stats"]
+		if not stats.has("achievements"): stats["achievements"] = []
+		if not stats.has("random_wins"): stats["random_wins"] = 0
+		if not stats.has("random_s_ranks"): stats["random_s_ranks"] = 0
+		if not stats.has("bronze_wins"): stats["bronze_wins"] = 0
+		if not stats.has("silver_wins"): stats["silver_wins"] = 0
+		if not stats.has("gold_wins"): stats["gold_wins"] = 0
+		if not stats.has("dark_mode_wins"): stats["dark_mode_wins"] = 0
+		if not stats.has("password_wins"): stats["password_wins"] = 0
+			
 		print("[SAVE] Partida cargada y validada correctamente.")
 		return true
 		
