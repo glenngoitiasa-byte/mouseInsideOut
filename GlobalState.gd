@@ -7,13 +7,14 @@ var current_seed: int = 0
 var current_maze_width: int = 15
 var current_maze_height: int = 15
 var current_cheese_count: int = 0
+var current_random_level_name: String = "Nivel Desconocido"
 
 # Modificadores activos del nivel actual
 var current_is_dark_mode: bool = false
 var current_has_password: bool = false
 var current_max_cheeses: int = 0 # Necesario para saber si recogió el 100%
 
-func complete_history_level(level_num: int, cheeses_collected: int, steps: int, rank: String) -> void:
+func complete_history_level(level_num: int, cheeses_collected: int, steps: int, lines: int, crashes:int, rank: String) -> void:
 	if level_num >= SaveManager.current_save["history_levels_unlocked"]:
 		SaveManager.current_save["history_levels_unlocked"] = level_num + 1
 		
@@ -28,16 +29,33 @@ func complete_history_level(level_num: int, cheeses_collected: int, steps: int, 
 		"all_cheeses": (cheeses_collected >= current_max_cheeses) # NUEVO: Marca si recogió todos
 	}
 	
+	# Al ganar/perder, crea el diccionario del intento
+	var attempt_data = {
+		"tipo": "historia", # O "aleatorio" según corresponda
+		"nivel_id": str(level_num), # O la semilla si es aleatorio
+		"pasos": steps,
+		"quesos": cheeses_collected,
+		"choques": crashes,
+		"lineas": lines,
+		"victoria": true # o false si perdió
+	}
+	
+	var log_array = SaveManager.current_save["player_stats"]["attempts_log"]
+	log_array.append(attempt_data)
+	if log_array.size() > 50:
+		log_array.pop_front()
+		
+	
 	SaveManager.save_game()
 	AchievementManager.check_achievements() # Dispara la evaluación de logros
 
-func complete_random_level(seed_value: int, cheeses: int, steps: int, lines: int, rank: String) -> void:
+func complete_random_level(seed_value: int, cheeses_collected: int, steps: int, crashes: int, lines: int, rank: String) -> void:
 	var level_key = "random_" + str(seed_value)
 	var stats = SaveManager.current_save["player_stats"]
 	
 	# Guardar Récord (Tu código actual...)
 	if not stats["best_scores"].has(level_key):
-		stats["best_scores"][level_key] = {"rank": rank, "best_steps": steps, "best_lines": lines, "max_cheeses": cheeses}
+		stats["best_scores"][level_key] = {"rank": rank, "best_steps": steps, "best_lines": lines,  "max_cheeses": cheeses_collected}
 	else:
 		var current_record = stats["best_scores"][level_key]
 		if steps < current_record["best_steps"]: current_record["best_steps"] = steps
@@ -57,6 +75,22 @@ func complete_random_level(seed_value: int, cheeses: int, steps: int, lines: int
 	if current_is_dark_mode: stats["dark_mode_wins"] += 1
 	if current_has_password: stats["password_wins"] += 1
 		
+	# Al ganar/perder, crea el diccionario del intento
+	var attempt_data = {
+		"tipo": "aleatorio", # O "aleatorio" según corresponda
+		"nivel_id": GlobalState.current_random_level_name, # O la semilla si es aleatorio
+		"pasos": steps,
+		"quesos": cheeses_collected,
+		"choques": crashes,
+		"lineas": lines,
+		"victoria": true # o false si perdió
+	}
+	
+	var log_array = SaveManager.current_save["player_stats"]["attempts_log"]
+	log_array.append(attempt_data)
+	if log_array.size() > 50:
+		log_array.pop_front()
+		
 	SaveManager.save_game()
 	AchievementManager.check_achievements() # Dispara la evaluación de logros
 
@@ -69,6 +103,7 @@ func save_random_level_card(card_data: Dictionary) -> void:
 			print("[SISTEMA] Esta tarjeta ya está en tu colección.")
 			return
 			
+	
 	# Agregar y guardar
 	saved_cards.append(card_data)
 	SaveManager.save_game()

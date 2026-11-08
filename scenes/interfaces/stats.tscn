@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://rnirhffkjlyh"]
+
+[ext_resource type="Script" uid="uid://bw5cjdpkf42kf" path="res://scripts/Stats.gd" id="1_8vf1k"]
+
+[node name="Stats" type="Control" unique_id=966204825]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8vf1k")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=710870666]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.22763368, 0.08738106, 1.2032688e-08, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=789339154]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Volver" type="Button" parent="HBoxContainer" unique_id=598969463]
+layout_mode = 2
+text = "Volver"
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer" unique_id=215207814]
+layout_mode = 2
+
+[node name="TitleLbl" type="Label" parent="HBoxContainer" unique_id=87638972]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Estadísticas"
+
+[node name="VScrollBar" type="ScrollContainer" parent="." unique_id=474880763]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 58.0
+offset_right = 1135.0
+offset_bottom = 646.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VScrollBar" unique_id=1594551438]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="VScrollBar/VBoxContainer" unique_id=1057533886]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VScrollBar/VBoxContainer/PanelContainer" unique_id=1956579709]
+layout_mode = 2
+
+[node name="Graphic" type="Control" parent="VScrollBar/VBoxContainer/PanelContainer/VBoxContainer" unique_id=738300107]
+custom_minimum_size = Vector2(1100, 520)
+custom_maximum_size = Vector2(-1, 520)
+layout_mode = 2
+
+[node name="HBoxButtonContainer" type="HBoxContainer" parent="VScrollBar/VBoxContainer/PanelContainer/VBoxContainer" unique_id=477778590]
+layout_mode = 2
+
+[node name="OptType" type="OptionButton" parent="VScrollBar/VBoxContainer/PanelContainer/VBoxContainer/HBoxButtonContainer" unique_id=814219138]
+layout_mode = 2
+
+[node name="OptLevel" type="OptionButton" parent="VScrollBar/VBoxContainer/PanelContainer/VBoxContainer/HBoxButtonContainer" unique_id=1613472153]
+layout_mode = 2
+
+[node name="CheckBoxSteps" type="CheckBox" parent="VScrollBar/VBoxContainer/PanelContainer/VBoxContainer/HBoxButtonContainer" unique_id=2056437607]
+layout_mode = 2
+text = "Pasos"
+
+[node name="CheckBoxCheeses" type="CheckBox" parent="VScrollBar/VBoxContainer/PanelContainer/VBoxContainer/HBoxButtonContainer" unique_id=1096701142]
+layout_mode = 2
+text = "Quesos"
+
+[node name="CheckBoxLines" type="CheckBox" parent="VScrollBar/VBoxContainer/PanelContainer/VBoxContainer/HBoxButtonContainer" unique_id=1485577866]
+layout_mode = 2
+text = "Líneas"
+
+[node name="CheckBoxCrashes" type="CheckBox" parent="VScrollBar/VBoxContainer/PanelContainer/VBoxContainer/HBoxButtonContainer" unique_id=1820011277]
+layout_mode = 2
+text = "Choques"
+
+[node name="LblVictories" type="Label" parent="VScrollBar/VBoxContainer/PanelContainer/VBoxContainer/HBoxButtonContainer" unique_id=1290549802]
+layout_mode = 2

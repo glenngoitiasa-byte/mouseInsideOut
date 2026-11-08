@@ -69,6 +69,14 @@ size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 21
 text = "Logros"
 
+[node name="BtnStats" type="Button" parent="CenterContainer/VBoxContainer" unique_id=387103965]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 21
+text = "Estadísticas
+"
+
 [node name="BtnSettings" type="Button" parent="CenterContainer/VBoxContainer" unique_id=720837003]
 custom_minimum_size = Vector2(250, 40)
 layout_mode = 2

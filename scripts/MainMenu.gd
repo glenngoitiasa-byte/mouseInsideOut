@@ -9,12 +9,14 @@ const ACHIEVEMENTS_SCENE: String = "res://scenes/interfaces/achievements_menu.ts
 @onready var btn_play: Button = $CenterContainer/VBoxContainer/BtnPlay
 @onready var btn_creation: Button = $CenterContainer/VBoxContainer/BtnCreation
 @onready var btn_achievements: Button = $CenterContainer/VBoxContainer/BtnAchievements
+@onready var btn_stats: Button = $CenterContainer/VBoxContainer/BtnStats
 @onready var btn_settings: Button = $CenterContainer/VBoxContainer/BtnSettings
 
 func _ready() -> void:
 	btn_play.pressed.connect(_on_btn_play_pressed)
 	btn_creation.pressed.connect(_on_btn_creation_pressed)
 	btn_achievements.pressed.connect(_on_btn_achievements_pressed)
+	btn_stats.pressed.connect(_on_btn_stats_pressed)
 	btn_settings.pressed.connect(_on_btn_settings_pressed)
 	
 	# Enfocar automáticamente el primer botón para navegación con teclado/mando
@@ -31,6 +33,9 @@ func _on_btn_creation_pressed() -> void:
 func _on_btn_achievements_pressed() -> void:
 	get_tree().change_scene_to_file(ACHIEVEMENTS_SCENE)
 
+func _on_btn_stats_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/interfaces/stats.tscn")
+	
 # 4. Opción Configuración (Placeholder para preferencias)
 func _on_btn_settings_pressed() -> void:
 	print("[MENÚ] Configuración seleccionada (En desarrollo).")

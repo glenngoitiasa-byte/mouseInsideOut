@@ -21,6 +21,7 @@ var current_save: Dictionary = {
 		"silver_wins": 0,
 		"gold_wins": 0,
 		"dark_mode_wins": 0,
+		"attempts_log": [],
 		"password_wins": 0
 	}
 }
@@ -107,11 +108,14 @@ func _read_save_file(path: String) -> bool:
 		if not stats.has("gold_wins"): stats["gold_wins"] = 0
 		if not stats.has("dark_mode_wins"): stats["dark_mode_wins"] = 0
 		if not stats.has("password_wins"): stats["password_wins"] = 0
+		if not stats.has("attempts_log"): stats["attempts_log"] = []
 			
 		print("[SAVE] Partida cargada y validada correctamente.")
 		return true
 		
 	return false
+
+
 
 func _restore_backup() -> void:
 	var dir = DirAccess.open("user://")

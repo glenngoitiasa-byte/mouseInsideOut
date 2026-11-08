@@ -310,7 +310,7 @@ func execute_action(action_name: String):
 							collision_count
 						)
 						append_console("[VICTORIA] Rango obtenido: " + rank)
-						GlobalState.complete_history_level(current_level_number, run_cheeses, step_count, rank)
+						GlobalState.complete_history_level(current_level_number, run_cheeses, step_count, active_lines, collision_count, rank)
 						append_console("[SISTEMA] Progreso de historia guardado.")
 					else:
 						# NUEVA LÓGICA: Nivel Aleatorio
@@ -319,7 +319,7 @@ func execute_action(action_name: String):
 							collision_count
 						)
 						append_console("[VICTORIA] Rango aleatorio obtenido: " + rank)
-						GlobalState.complete_random_level(GlobalState.current_seed, run_cheeses, step_count, active_lines, rank)
+						GlobalState.complete_random_level(GlobalState.current_seed, run_cheeses, step_count, collision_count, active_lines, rank)
 						append_console("[SISTEMA] Récords de nivel aleatorio actualizados.")
 
 		"girar_izquierda":
@@ -460,7 +460,7 @@ func _check_win_condition(mouse_grid_pos: Vector2i) -> void:
 				collision_count
 			)
 			append_console("[VICTORIA] Rango obtenido: " + rank)
-			GlobalState.complete_history_level(current_level_number, run_cheeses, step_count, rank)
+			GlobalState.complete_history_level(current_level_number, run_cheeses, step_count, active_lines, collision_count, rank)
 			append_console("[SISTEMA] Progreso de historia guardado.")
 		else:
 			# --- MODO ALEATORIO ---
@@ -475,11 +475,5 @@ func _check_win_condition(mouse_grid_pos: Vector2i) -> void:
 			append_console("[VICTORIA] Rango aleatorio obtenido: " + rank)
 			
 			# ¡Llamada directa al guardado de récords aleatorios!
-			GlobalState.complete_random_level(
-				GlobalState.current_seed, 
-				run_cheeses, 
-				step_count, 
-				active_lines, 
-				rank
-			)
+			GlobalState.complete_random_level(GlobalState.current_seed, run_cheeses, step_count, collision_count, active_lines, rank)
 			append_console("[SISTEMA] Récords de nivel aleatorio guardados en disco.")
