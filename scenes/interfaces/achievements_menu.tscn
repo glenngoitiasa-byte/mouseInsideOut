@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://dt2uyu5rl7sly"]
+
+[ext_resource type="Script" uid="uid://dlcyruwr268gw" path="res://scripts/AchievementsMenu.gd" id="1_wa70k"]
+
+[node name="Control" type="Control" unique_id=203592908]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wa70k")
+
+[node name="Background" type="ColorRect" parent="." unique_id=794638990]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.22763368, 0.08738106, 1.2032688e-08, 1)
+
+[node name="HBoxContainer" type="VBoxContainer" parent="." unique_id=1520598006]
+layout_mode = 0
+offset_right = 224.0
+offset_bottom = 72.0
+
+[node name="HSeparator" type="HSeparator" parent="HBoxContainer" unique_id=591209220]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer" unique_id=325222407]
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer/HBoxContainer2" unique_id=1687883194]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+
+[node name="ButtonBack" type="Button" parent="HBoxContainer/HBoxContainer2" unique_id=1880114494]
+layout_mode = 2
+text = "Volver"
+
+[node name="VSeparator3" type="VSeparator" parent="HBoxContainer/HBoxContainer2" unique_id=826783098]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
+
+[node name="LabelAchievements" type="Label" parent="HBoxContainer/HBoxContainer2" unique_id=93721319]
+layout_mode = 2
+theme_override_font_sizes/font_size = 31
+text = "Logros"
+
+[node name="ScrollBar" type="ScrollContainer" parent="." unique_id=599195533]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 75.0
+offset_right = 1133.0
+offset_bottom = 631.0
+
+[node name="VBoxLogros" type="VBoxContainer" parent="ScrollBar" unique_id=1873204044]
+custom_minimum_size = Vector2(1100, 50)
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="ScrollBar/VBoxLogros" unique_id=1850300080]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="HBoxFormat" type="HBoxContainer" parent="ScrollBar/VBoxLogros/PanelContainer" unique_id=1685955792]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="ScrollBar/VBoxLogros/PanelContainer/HBoxFormat" unique_id=1735951826]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollBar/VBoxLogros/PanelContainer/HBoxFormat" unique_id=1157932153]
+layout_mode = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="ScrollBar/VBoxLogros/PanelContainer/HBoxFormat" unique_id=249778092]

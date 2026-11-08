@@ -4,6 +4,7 @@ extends Control
 # Ruta a la siguiente pantalla (Mapa de Niveles)
 const LEVEL_MAP_SCENE: String = "res://scenes/level_map.tscn"
 const RANDOM_MENU_SCENE: String = "res://scenes/RandomLevelMenu.tscn"
+const ACHIEVEMENTS_SCENE: String = "res://scenes/interfaces/achievements_menu.tscn"
 
 @onready var btn_play: Button = $CenterContainer/VBoxContainer/BtnPlay
 @onready var btn_creation: Button = $CenterContainer/VBoxContainer/BtnCreation
@@ -28,7 +29,7 @@ func _on_btn_creation_pressed() -> void:
 	get_tree().change_scene_to_file(RANDOM_MENU_SCENE)
 # 3. Opción Logros (Placeholder para estadísticas)
 func _on_btn_achievements_pressed() -> void:
-	print("[MENÚ] Panel de Logros seleccionado (En desarrollo).")
+	get_tree().change_scene_to_file(ACHIEVEMENTS_SCENE)
 
 # 4. Opción Configuración (Placeholder para preferencias)
 func _on_btn_settings_pressed() -> void:

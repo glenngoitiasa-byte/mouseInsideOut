@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://croi5h37t7bmn"]
+
+[ext_resource type="Script" uid="uid://cieu8dlegwci3" path="res://scripts/AchievementNotification.gd" id="1_sfvku"]
+
+[sub_resource type="Animation" id="Animation_sfvku"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, -41)]
+}
+
+[sub_resource type="Animation" id="Animation_7ttd6"]
+resource_name = "notification_animation"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, -41), Vector2(4, 4)]
+}
+
+[sub_resource type="Animation" id="Animation_ittfi"]
+resource_name = "salida"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(4, 4), Vector2(1, -41)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ittfi"]
+_data = {
+&"RESET": SubResource("Animation_sfvku"),
+&"entrada": SubResource("Animation_7ttd6"),
+&"salida": SubResource("Animation_ittfi")
+}
+
+[node name="LogroNotification" type="CanvasLayer" unique_id=116571718]
+script = ExtResource("1_sfvku")
+
+[node name="Panel" type="Panel" parent="." unique_id=1784402592]
+anchors_preset = -1
+anchor_right = 0.017
+anchor_bottom = 0.158
+offset_left = 1.0
+offset_top = -41.0
+offset_right = 31.41422
+offset_bottom = -103.38411
+
+[node name="LabelAchUnblk" type="Label" parent="Panel" unique_id=2092369125]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 10.0
+offset_right = 42.0
+offset_bottom = 33.0
+
+[node name="NotificationAnimation" type="AnimationPlayer" parent="." unique_id=611937803]
+root_node = NodePath("../Panel")
+libraries/ = SubResource("AnimationLibrary_ittfi")

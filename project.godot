@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 GlobalState="*uid://b44bv51ja2u2g"
 SaveManager="*uid://dk78udqxj8uv2"
 AchievementManager="*uid://f3rs3ugo884k"
+LogroNotification="*uid://croi5h37t7bmn"
 
 [display]
 

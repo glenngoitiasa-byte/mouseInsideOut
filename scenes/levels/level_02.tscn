@@ -47,3 +47,6 @@ tile_set = SubResource("TileSet_c6rld")
 [node name="Collectibles" type="Node2D" parent="." unique_id=1054306137]
 
 [node name="Collectible" parent="Collectibles" unique_id=1301690940 instance=ExtResource("4_a3l5x")]
+
+[node name="Collectible2" parent="Collectibles" unique_id=1033817291 instance=ExtResource("4_a3l5x")]
+grid_pos = Vector2i(14, 7)
