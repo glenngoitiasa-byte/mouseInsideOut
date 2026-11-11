@@ -17,3 +17,5 @@ rotation = -1.5707964
 texture = ExtResource("1_cwiyn")
 
 [node name="PointLight2D" type="PointLight2D" parent="." unique_id=807471237]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1301071168]

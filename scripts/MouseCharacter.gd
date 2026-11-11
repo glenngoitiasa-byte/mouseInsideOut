@@ -8,9 +8,17 @@ var grid_pos: Vector2i = Vector2i(1, 1)
 var current_dir_index: int = 1 # 0: Norte, 1: Este, 2: Sur, 3: Oeste
 var directions: Array[Vector2i] = [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]
 
+# Variables de configuración del zoom
+@onready var camera: Camera2D = $Camera2D
+var zoom_min: float = 0.8  # Límite máximo para alejar (zoom out)
+var zoom_max: float = 3.0  # Límite máximo para acercar (zoom in)
+var zoom_step: float = 0.25 # Cuánto cambia el zoom por cada "clic" de la rueda
+var current_target_zoom: float = 2.5 # Nivel de zoom inicial
+
 var active_tween: Tween = null
 
 func _ready() -> void:
+	camera.zoom = Vector2(current_target_zoom, current_target_zoom)
 	update_world_position_instant()
 
 # Cancela cualquier animación activa de forma segura
@@ -71,3 +79,19 @@ func reset_to_start(start_pos: Vector2i, dir_index: int = 1) -> void:
 	grid_pos = start_pos
 	current_dir_index = dir_index
 	update_world_position_instant()
+
+func _input(event: InputEvent) -> void:
+	# Filtramos para que solo reaccione a botones del ratón al ser presionados
+	if event is InputEventMouseButton and event.is_pressed():
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			_aplicar_zoom(zoom_step) # Rueda hacia arriba -> Acercar
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			_aplicar_zoom(-zoom_step) # Rueda hacia abajo -> Alejar
+
+func _aplicar_zoom(cambio: float) -> void:
+	# clamp() asegura que el valor nunca baje de zoom_min ni pase de zoom_max
+	current_target_zoom = clamp(current_target_zoom + cambio, zoom_min, zoom_max)
+	
+	# Usamos un Tween muy rápido (0.15s) para que el salto del scroll se sienta suave
+	var tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(camera, "zoom", Vector2(current_target_zoom, current_target_zoom), 0.15)
