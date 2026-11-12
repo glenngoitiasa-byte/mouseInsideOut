@@ -36,8 +36,11 @@ sources/1 = SubResource("TileSetAtlasSource_ppbiy")
 sources/2 = SubResource("TileSetAtlasSource_c6rld")
 sources/3 = SubResource("TileSetAtlasSource_yklhy")
 
-[node name="Level_02" type="Node2D" unique_id=17804324]
+[node name="Level_03" type="Node2D" unique_id=17804324]
 script = ExtResource("1_fvfhs")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=1762481345]
+color = Color(0.0142752165, 0.014275218, 0.014275218, 1)
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=379508417]
 position = Vector2(1, -1)

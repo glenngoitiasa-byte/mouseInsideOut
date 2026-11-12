@@ -30,22 +30,30 @@ var levels_info: Dictionary = {
 	},
 	2: {
 		"title": "Nivel 2: La Encrucijada",
-		"desc": "Usa sensores (frente_libre, etc.)
-		 y tomadores de decisiones 'if'.",
+		"desc": "Usa sensores, toma decisiones
+		y utiliza los bucles while .",
 		"best_steps": 24,
 		"cheeses": "2/2",
 		"pos": Vector2(800, 600)
 	},
 	3: {
-		"title": "Nivel 3: El Espiral sin Fin",
+		"title": "Nivel 3: Niebla en la Penumbra",
 		"desc": "Domina los bucles 'while' y 
-		optimiza tu código.",
+		navega a oscuras usando visión 
+		radial.",
 		"best_steps": 45,
 		"cheeses": "3/3",
 		"pos": Vector2(950, 300)
 	},
 	4: {
-		"title": "Nivel 4: Niebla en la Penumbra",
+		"title": "Nivel 4: Resuelve la contraseña",
+		"desc": "Consigue las contraseñas.",
+		"best_steps": "---",
+		"cheeses": "0/3",
+		"pos": Vector2(380, 180)
+	},
+	5: {
+		"title": "Nivel 5: Prueba tus habilidades",
 		"desc": "Navega a oscuras usando visión 
 		radial. Consigue las contraseñas.",
 		"best_steps": "---",

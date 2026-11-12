@@ -25,3 +25,6 @@ extends Node2D
 @export var ideal_steps: int = 10 
 ## Cantidad total de quesos instanciados en este nivel
 @export var max_cheeses: int = 3
+
+# En BaseMap.gd o level_05.gd
+@export var target_password: Array[String] = [] #  ["M", "O", "U", "S", "E"]

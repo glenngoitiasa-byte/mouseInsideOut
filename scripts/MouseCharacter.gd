@@ -80,7 +80,7 @@ func reset_to_start(start_pos: Vector2i, dir_index: int = 1) -> void:
 	current_dir_index = dir_index
 	update_world_position_instant()
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	# Filtramos para que solo reaccione a botones del ratón al ser presionados
 	if event is InputEventMouseButton and event.is_pressed():
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:

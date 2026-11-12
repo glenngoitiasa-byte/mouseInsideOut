@@ -36,7 +36,7 @@ sources/2 = SubResource("TileSetAtlasSource_1ey3t")
 sources/3 = SubResource("TileSetAtlasSource_t0hvh")
 sources/4 = SubResource("TileSetAtlasSource_kfebt")
 
-[node name="Level_01" type="Node2D" unique_id=17804324]
+[node name="Level_02" type="Node2D" unique_id=17804324]
 script = ExtResource("1_f5vym")
 start_cell = Vector2i(1, 6)
 start_dir_index = 0

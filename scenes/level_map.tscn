@@ -103,6 +103,13 @@ offset_right = 483.0
 offset_bottom = 266.0
 texture_normal = ExtResource("5_ublle")
 
+[node name="LevelNode5" type="TextureButton" parent="LevelNodes" unique_id=441898715]
+offset_left = 963.0
+offset_top = 59.0
+offset_right = 1022.0
+offset_bottom = 109.0
+texture_normal = ExtResource("5_ublle")
+
 [node name="MouseAvatar" type="Sprite2D" parent="." unique_id=1365263509]
 position = Vector2(91, 508)
 texture = ExtResource("2_4jybi")
