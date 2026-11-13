@@ -41,6 +41,11 @@ position = Vector2(-31, 2)
 script = ExtResource("1_hqfam")
 start_cell = Vector2i(9, 10)
 goal_cell = Vector2i(5, 4)
+is_dark_level = true
+ideal_lines = 15
+ideal_steps = 30
+max_cheeses = 0
+target_password = Array[String](["H", "A", "C", "K", "E"])
 
 [node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=2094545875]
 visible = false
@@ -55,3 +60,24 @@ tile_set = SubResource("TileSet_wehc4")
 [node name="Collectible" parent="Collectibles" unique_id=1301690940 instance=ExtResource("6_nodfw")]
 grid_pos = Vector2i(19, 4)
 is_cheese = false
+char_val = "H"
+
+[node name="Collectible2" parent="Collectibles" unique_id=928490746 instance=ExtResource("6_nodfw")]
+grid_pos = Vector2i(19, 4)
+is_cheese = false
+char_val = "A"
+
+[node name="Collectible3" parent="Collectibles" unique_id=110131642 instance=ExtResource("6_nodfw")]
+grid_pos = Vector2i(19, 4)
+is_cheese = false
+char_val = "C"
+
+[node name="Collectible4" parent="Collectibles" unique_id=226892170 instance=ExtResource("6_nodfw")]
+grid_pos = Vector2i(19, 4)
+is_cheese = false
+char_val = "K"
+
+[node name="Collectible5" parent="Collectibles" unique_id=427030891 instance=ExtResource("6_nodfw")]
+grid_pos = Vector2i(19, 4)
+is_cheese = false
+char_val = "E"

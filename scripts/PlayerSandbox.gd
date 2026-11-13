@@ -84,3 +84,11 @@ func derecha_libre() -> bool:
 	if not _is_valid_execution(): return false
 	if not _check_sensor_guard(): return false
 	return level_ref.is_right_free()
+
+func casilla_salida() -> bool:
+	# Llama a la función que creamos en PlayableLevel_3.gd
+	return level_ref.is_on_goal()
+
+func escapar() -> void:
+	# Ejecuta la acción en el sistema central
+	await level_ref.execute_action("escapar")

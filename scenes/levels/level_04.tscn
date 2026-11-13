@@ -41,6 +41,7 @@ script = ExtResource("1_ypi4k")
 start_cell = Vector2i(8, 8)
 start_dir_index = 2
 goal_cell = Vector2i(1, 8)
+is_dark_level = true
 target_password = Array[String](["M", "O", "U", "S", "E"])
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=460723809]

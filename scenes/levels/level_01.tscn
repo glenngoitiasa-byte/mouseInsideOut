@@ -41,6 +41,7 @@ script = ExtResource("1_m802k")
 start_cell = Vector2i(1, 4)
 start_dir_index = 0
 goal_cell = Vector2i(17, 1)
+allowed_keywords = Array[String](["avanzar", "girar_derecha", "girar_izquierda", "if", "casilla_salida", "escapar"])
 ideal_lines = 23
 ideal_steps = 20
 max_cheeses = 1

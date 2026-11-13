@@ -12,10 +12,10 @@ extends Node2D
 @export var goal_cell: Vector2i = Vector2i(1, 14)
 
 @export_group("Configuración Ambiental y Mecánicas")
-## Activa el ambiente oscuro y la linterna en el ratón (útil para el Nivel 4)
+## Activa el ambiente oscuro y la linterna en el ratón 
 @export var is_dark_level: bool = false
 
-## Palabras clave permitidas en el editor de código para este nivel (dejar vacío si no hay restricción)
+## Palabras clave permitidas en el editor de código para este nivel 
 @export var allowed_keywords: Array[String] = []
 
 @export_group("Criterios de Calificación (Solo Historia)")
@@ -26,5 +26,4 @@ extends Node2D
 ## Cantidad total de quesos instanciados en este nivel
 @export var max_cheeses: int = 3
 
-# En BaseMap.gd o level_05.gd
-@export var target_password: Array[String] = [] #  ["M", "O", "U", "S", "E"]
+@export var target_password: Array[String] = [] 

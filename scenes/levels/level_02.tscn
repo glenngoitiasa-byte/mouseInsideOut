@@ -41,6 +41,7 @@ script = ExtResource("1_f5vym")
 start_cell = Vector2i(1, 6)
 start_dir_index = 0
 goal_cell = Vector2i(19, 6)
+allowed_keywords = Array[String](["avanzar", "girar_derecha", "girar_izquierda", "if", "elif", "else", "for", "while", "frente_libre", "derecha_libre", "izquierda_libre", "casilla_salida", "escapar"])
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=460723809]
 position = Vector2(1, -1)

@@ -225,6 +225,12 @@ func _is_cell_free(cell_pos: Vector2i) -> bool:
 		return false # Celda vacía/sin terreno
 	return not _is_wall(cell_pos)
 
+func is_on_goal() -> bool:
+	if mouse_character == null: return false
+	# Comprueba si la celda actual en la que está parado el ratón es la meta
+	var current_cell = Vector2i(mouse_character.global_position / 32)
+	return current_cell == GOAL_CELL
+
 # --- RECOLECTABLES (RQNF30, RQNF31, RQNF32) ---
 func _check_collectibles(cell_pos: Vector2i) -> void:
 	if collectibles_node == null: return
@@ -288,39 +294,19 @@ func execute_action(action_name: String):
 				await mouse_character.move_to_grid(target_cell, speed_scale)
 				
 				_check_collectibles(target_cell) # Asumo que aquí sumas +1 a run_cheeses o cheese_count
-				
-				# === BLOQUE DE VICTORIA CORREGIDO ===
-				if target_cell == GOAL_CELL:
-					level_state = "VICTORY"
-					append_console("-------------------------------------------")
-					append_console("[¡VICTORIA!] ¡El ratón alcanzó la meta en " + str(target_cell) + "!")
-					append_console("-------------------------------------------")
-					
-					# 1. Calcular las líneas de código activas (sirve para ambos modos)
-					var active_lines: int = 0
-					for line in code_editor.text.split("\n"):
-						if line.strip_edges() != "": 
-							active_lines += 1
 
-					if not GlobalState.is_random_mode:
-						var rank = GradingEngine.calculate_history_rank(
-							run_cheeses, current_map_node.max_cheeses,
-							active_lines, current_map_node.ideal_lines,
-							step_count, current_map_node.ideal_steps,
-							collision_count
-						)
-						append_console("[VICTORIA] Rango obtenido: " + rank)
-						GlobalState.complete_history_level(current_level_number, run_cheeses, step_count, active_lines, collision_count, rank)
-						append_console("[SISTEMA] Progreso de historia guardado.")
-					else:
-						# NUEVA LÓGICA: Nivel Aleatorio
-						var rank = GradingEngine.calculate_random_rank(
-							run_cheeses, current_map_node.max_cheeses, 
-							collision_count
-						)
-						append_console("[VICTORIA] Rango aleatorio obtenido: " + rank)
-						GlobalState.complete_random_level(GlobalState.current_seed, run_cheeses, step_count, collision_count, active_lines, rank)
-						append_console("[SISTEMA] Récords de nivel aleatorio actualizados.")
+		"escapar":
+			# Asumiendo que tu ratón tiene una variable grid_pos o calculando su celda actual
+			var current_cell = Vector2i(mouse_character.global_position / 32)
+			
+			if current_cell == GOAL_CELL:
+				append_console("[ACCIÓN] Escotilla de salida activada.")
+				_check_win_condition(current_cell) # Llama a tu función de victoria existente
+			else:
+				collision_count += 1 # Penalización opcional por intentar escapar donde no hay salida
+				append_console("[ERROR] ¡Aquí no hay ninguna salida!")
+				if collision_count >= MAX_COLLISIONS:
+					level_state = "GAME_OVER"
 
 		"girar_izquierda":
 			step_count += 1
@@ -391,9 +377,16 @@ func _compile_and_run(raw_code: String) -> void:
 		var indent_len: int = line.length() - line.lstrip(" \t").length()
 		var leading_indent: String = line.left(indent_len).replace("    ", "\t")
 		
-		# Inyección automática de await en comandos de movimiento
 		if trimmed.begins_with("avanzar") or trimmed.begins_with("girar_izquierda") or trimmed.begins_with("girar_derecha"):
 			script_source += "\t" + leading_indent + "await " + trimmed + "\n"
+		elif trimmed.begins_with("while ") or trimmed.begins_with("for "):
+			# Inyecta la línea del usuario y una instrucción invisible para prevenir el bloqueo del hilo principal
+			script_source += "\t" + leading_indent + trimmed + "\n"
+			script_source += "\t\t" + leading_indent + "await Engine.get_main_loop().process_frame\n"
+		elif trimmed.begins_with("func "):
+			# Si el jugador declara una función, quitamos el nivel de tabulación extra del run()
+			# Esto saca la función fuera de run() para que se compile como método hermano en el script generado.
+			script_source += trimmed + "\n"
 		else:
 			script_source += "\t" + leading_indent + trimmed + "\n"
 

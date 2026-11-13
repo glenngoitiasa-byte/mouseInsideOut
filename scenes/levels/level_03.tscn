@@ -38,6 +38,7 @@ sources/3 = SubResource("TileSetAtlasSource_yklhy")
 
 [node name="Level_03" type="Node2D" unique_id=17804324]
 script = ExtResource("1_fvfhs")
+allowed_keywords = Array[String](["avanzar", "girar_derecha", "girar_izquierda", "if", "elif", "else", "for", "while", "frente_libre", "derecha_libre", "izquierda_libre", "casilla_salida", "escapar", "and", "not"])
 
 [node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=1762481345]
 color = Color(0.0142752165, 0.014275218, 0.014275218, 1)
