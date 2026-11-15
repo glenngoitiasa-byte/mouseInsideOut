@@ -352,7 +352,7 @@ func _on_btn_execute_pressed() -> void:
 @export var current_level_number: int = 3 # Nivel activo para filtrar instrucciones
 
 func _compile_and_run(raw_code: String) -> void:
-	current_execution_id += 1 # Invalida cualquier corrutina previa que siga viva
+	current_execution_id += 1
 	is_executing = true
 	level_state = "RUNNING"
 	code_editor.editable = false
@@ -366,9 +366,25 @@ func _compile_and_run(raw_code: String) -> void:
 		_reset_execution_state()
 		return
 
-	var script_source: String = "extends PlayerSandbox\n\nfunc run():\n"
-	var lines: PackedStringArray = raw_code.split("\n")
+	var script_source: String = "extends PlayerSandbox\n\n"
+	var uses_main_structure: bool = raw_code.contains("func main():") or raw_code.contains("func inicio():")
 	
+	if not uses_main_structure:
+		# Para Niveles 1-3: Envolvemos el código suelto en run()
+		script_source += "func run():\n"
+		
+	var lines: PackedStringArray = raw_code.split("\n")
+	var user_functions: Array[String] = []
+	
+	# Pre-escaneo para registrar las funciones que invente el jugador (ej: "explorar")
+	for line in lines:
+		var t = line.strip_edges()
+		if t.begins_with("func "):
+			var fn_name = t.replace("func ", "").split("(")[0].strip_edges()
+			if fn_name != "main" and fn_name != "inicio" and fn_name != "run":
+				user_functions.append(fn_name)
+
+	# Inyección de código
 	for line in lines:
 		var trimmed = line.strip_edges()
 		if trimmed.is_empty():
@@ -377,20 +393,25 @@ func _compile_and_run(raw_code: String) -> void:
 		var indent_len: int = line.length() - line.lstrip(" \t").length()
 		var leading_indent: String = line.left(indent_len).replace("    ", "\t")
 		
-		if trimmed.begins_with("avanzar") or trimmed.begins_with("girar_izquierda") or trimmed.begins_with("girar_derecha"):
-			script_source += "\t" + leading_indent + "await " + trimmed + "\n"
+		# Si no usa main, damos una tabulación extra para meterlo dentro del run() inyectado
+		var final_indent = "\t" if not uses_main_structure else ""
+		
+		# Detectar si la línea actual llama a una función creada por el usuario
+		var is_user_func_call = false
+		for fn in user_functions:
+			if trimmed.begins_with(fn + "("):
+				is_user_func_call = true
+				break
+		
+		# Inyección automática de await para comandos base Y para funciones del usuario
+		if trimmed.begins_with("avanzar") or trimmed.begins_with("girar_") or trimmed.begins_with("escapar") or is_user_func_call:
+			script_source += final_indent + leading_indent + "await " + trimmed + "\n"
 		elif trimmed.begins_with("while ") or trimmed.begins_with("for "):
-			# Inyecta la línea del usuario y una instrucción invisible para prevenir el bloqueo del hilo principal
-			script_source += "\t" + leading_indent + trimmed + "\n"
-			script_source += "\t\t" + leading_indent + "await Engine.get_main_loop().process_frame\n"
-		elif trimmed.begins_with("func "):
-			# Si el jugador declara una función, quitamos el nivel de tabulación extra del run()
-			# Esto saca la función fuera de run() para que se compile como método hermano en el script generado.
-			script_source += trimmed + "\n"
+			script_source += final_indent + leading_indent + trimmed + "\n"
+			script_source += final_indent + leading_indent + "\tawait Engine.get_main_loop().process_frame\n"
 		else:
-			script_source += "\t" + leading_indent + trimmed + "\n"
+			script_source += final_indent + leading_indent + trimmed + "\n"
 
-	# 3. Compilador GDScript dinámico
 	var dynamic_script: GDScript = GDScript.new()
 	dynamic_script.source_code = script_source
 	var err: Error = dynamic_script.reload()
@@ -400,13 +421,22 @@ func _compile_and_run(raw_code: String) -> void:
 		_reset_execution_state()
 		return
 	
-	# 4. Instanciación y Ejecución Segura
-	# Pasamos el ID de ejecución actual al Sandbox
 	var sandbox_instance = dynamic_script.new(self, current_execution_id)
-	if sandbox_instance.has_method("run"):
-		await sandbox_instance.run()
-		if is_executing and level_state == "RUNNING" and sandbox_instance.my_execution_id == current_execution_id:
-			append_console("[FIN] Código completado sin alcanzar la meta.")
+	
+	sandbox_instance.pwd = password_collected
+	
+	# Ejecución inteligente basada en la estructura detectada
+	if uses_main_structure:
+		if sandbox_instance.has_method("main"):
+			await sandbox_instance.main()
+		elif sandbox_instance.has_method("inicio"):
+			await sandbox_instance.inicio()
+	else:
+		if sandbox_instance.has_method("run"):
+			await sandbox_instance.run()
+			
+	if is_executing and level_state == "RUNNING" and sandbox_instance.my_execution_id == current_execution_id:
+		append_console("[FIN] Código completado sin alcanzar la meta.")
 	_reset_execution_state()
 
 func _reset_execution_state() -> void:

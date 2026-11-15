@@ -4,7 +4,7 @@ extends RefCounted
 
 const GAME_COMMANDS = ["avanzar", "girar_izquierda", "girar_derecha", "leer_letra", "recolectar", "escapar"]
 const GAME_SENSORS = ["frente_libre", "izquierda_libre", "derecha_libre", "casilla_salida"]
-const GD_KEYWORDS = ["if", "elif", "else", "while", "for", "in", "range", "not", "and", "or", "true", "false", "pass", "var", "func"]
+const GD_KEYWORDS = ["if", "elif", "else", "while", "for", "in", "range", "not", "and", "or", "true", "false", "pass", "var", "func", "main", "inicio", "break", "pwd", "size"]
 
 class ValidationResult:
 	var is_valid: bool = true
@@ -85,7 +85,7 @@ static func validate_code(code: String, level_number: int, custom_allowed_tokens
 				return result
 
 		var clean_line = trimmed
-		for symbol in [":", "(", ")", ",", "=", "+", "-", "*", "/", ">", "<", "!", "\t", "[", "]"]:
+		for symbol in [":", "(", ")", ",", "=", "+", "-", "*", "/", ">", "<", "!", "\t", "[", "]", "."]:
 			clean_line = clean_line.replace(symbol, " ")
 		
 		var words = clean_line.split(" ", false)

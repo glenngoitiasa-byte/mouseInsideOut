@@ -7,6 +7,8 @@ var my_execution_id: int = 0
 var action_count: int = 0
 var consecutive_sensor_calls: int = 0
 
+var pwd: Array[String] = []
+
 const MAX_ACTIONS: int = 300
 const MAX_SENSORS_WITHOUT_ACTION: int = 1000
 
