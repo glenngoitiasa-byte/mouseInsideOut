@@ -99,9 +99,12 @@ func _ready() -> void:
 	
 	_highlight_active_tab()
 	console_log.scroll_following = true
+	code_editor.draw_tabs = true
 	
 	_load_active_map()
 	_reset_to_entrance()
+	_apply_dynamic_colors()
+	
 
 # Guarda el borrador actual en la memoria del disco para este nivel específico
 func _save_current_level_codes_to_disk() -> void:
@@ -120,6 +123,7 @@ func _save_current_level_codes_to_disk() -> void:
 
 func _on_code_edit_text_changed() -> void:
 	saved_codes[current_tab_index] = code_editor.text
+	_apply_dynamic_colors()
 
 func _switch_tab(new_index: int) -> void:
 	if current_tab_index == new_index: return
@@ -131,6 +135,8 @@ func _switch_tab(new_index: int) -> void:
 	code_editor.text = saved_codes[current_tab_index]
 	_highlight_active_tab()
 	print("[SISTEMA] Pestaña ", new_index + 1, " cargada para nivel: ", level_key)
+	
+	_apply_dynamic_colors()
 	
 func _highlight_active_tab() -> void:
 	btn_tab1.modulate = Color(1, 1, 1) if current_tab_index != 0 else Color(0.5, 1, 0.5)
@@ -500,3 +506,49 @@ func _check_win_condition(mouse_grid_pos: Vector2i) -> void:
 			# ¡Llamada directa al guardado de récords aleatorios!
 			GlobalState.complete_random_level(GlobalState.current_seed, run_cheeses, step_count, collision_count, active_lines, rank)
 			append_console("[SISTEMA] Récords de nivel aleatorio guardados en disco.")
+
+func _apply_dynamic_colors() -> void:
+	var lines = code_editor.text.split("\n")
+	
+	# 1. Definir la paleta de colores (Rojo, Verde, Azul, Transparencia/Fuerza)
+	var color_comando = Color(0.2, 0.6, 1.0, 0.25)  # Azul claro
+	var color_control = Color(0.9, 0.4, 0.1, 0.30)  # Naranja
+	var color_func = Color(0.6, 0.2, 0.8, 0.30)     # Morado
+	var color_vacio = Color(0, 0, 0, 0)             # Transparente
+	var color_var = Color(0.261, 0.58, 0.341, 0.729)
+	var block_stack: Array[Dictionary] = []
+	
+	for i in range(lines.size()):
+		var raw_line = lines[i]
+		var trimmed = raw_line.strip_edges()
+		
+		# Contar tabulaciones exactas
+		var current_indent = 0
+		for c in raw_line:
+			if c == "\t": current_indent += 1
+			else: break
+			
+		# Limpiar bloques cerrados si el jugador retrocedió la tabulación
+		while block_stack.size() > 0 and current_indent <= block_stack.back()["indent"]:
+			block_stack.pop_back()
+			
+		var base_color = color_vacio
+		var is_structure = false
+		
+		# 2. Identificar el tipo de instrucción principal de la línea
+		if trimmed.begins_with("func "):
+			base_color = color_func
+			is_structure = true
+		elif trimmed.begins_with("if") or trimmed.begins_with("elif") or trimmed.begins_with("else") or trimmed.begins_with("while") or trimmed.begins_with("for"):
+			base_color = color_control
+			is_structure = true
+		elif trimmed.begins_with("avanzar") or trimmed.begins_with("girar") or trimmed.begins_with("escapar") or trimmed.begins_with("recolectar") or trimmed.begins_with("break") or trimmed.begins_with("pass"):
+			base_color = color_comando
+		elif trimmed.begins_with("var"):
+			base_color = color_var
+
+		code_editor.set_line_background_color(i, base_color)
+		
+		# Guardar en memoria si abrimos un bloque de control nuevo
+		if is_structure and trimmed.ends_with(":"):
+			block_stack.push_back({"indent": current_indent, "color": base_color})

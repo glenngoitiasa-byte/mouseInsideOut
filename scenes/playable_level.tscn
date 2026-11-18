@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://c6fu0631mfvgt" path="res://scenes/levels/LevelMapData.gd" id="2_07dgv"]
 [ext_resource type="PackedScene" uid="uid://0ogquyctvt2o" path="res://scenes/mouse_character.tscn" id="2_7s1ja"]
 [ext_resource type="PackedScene" uid="uid://chh2cukildyjp" path="res://scenes/levels/level_random.tscn" id="4_xl6wr"]
+[ext_resource type="Texture2D" uid="uid://bfhvm2g5kl4l0" path="res://scenes/indentTab.png" id="5_07dgv"]
 
 [node name="PlayableLevel" type="Control" unique_id=2025259810]
 layout_mode = 3
@@ -13,6 +14,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_pte0f")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1469835121]
+layout_mode = 0
+offset_right = 1151.0
+offset_bottom = 649.0
+color = Color(0.22745098, 0.08627451, 0, 1)
 
 [node name="MainHBox" type="HBoxContainer" parent="." unique_id=849209064]
 layout_mode = 1
@@ -92,6 +99,7 @@ text = "Exit"
 [node name="CodeEditor" type="CodeEdit" parent="MainHBox/RightVBox" unique_id=526105294]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_icons/tab = ExtResource("5_07dgv")
 gutters_draw_line_numbers = true
 
 [node name="ControlsHBox" type="HBoxContainer" parent="MainHBox/RightVBox" unique_id=686628470]
