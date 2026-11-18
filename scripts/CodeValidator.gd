@@ -90,6 +90,39 @@ static func validate_code(code: String, level_number: int, custom_allowed_tokens
 				result.error_message = "Falta ':' al final."
 				return result
 
+		# 1. Quitar comentarios en línea para que no confundan al evaluador estricto
+		var no_comment = trimmed.split("#")[0].strip_edges()
+		
+		# 2. Extraer solo la parte matemática/lógica de la línea
+		var expr_to_check = no_comment
+		if no_comment.begins_with("if "): expr_to_check = no_comment.trim_prefix("if ").trim_suffix(":")
+		elif no_comment.begins_with("elif "): expr_to_check = no_comment.trim_prefix("elif ").trim_suffix(":")
+		elif no_comment.begins_with("while "): expr_to_check = no_comment.trim_prefix("while ").trim_suffix(":")
+		elif no_comment.begins_with("for "): 
+			var parts = no_comment.split(" in ")
+			if parts.size() > 1: expr_to_check = parts[1].trim_suffix(":")
+			else: expr_to_check = ""
+		elif no_comment.begins_with("var "): 
+			var parts = no_comment.split("=")
+			if parts.size() > 1: expr_to_check = parts[1]
+			else: expr_to_check = ""
+		elif "=" in no_comment and not "==" in no_comment:
+			var parts = no_comment.split("=")
+			expr_to_check = parts[1]
+		elif no_comment.begins_with("func ") or no_comment == "else:" or no_comment == "pass" or no_comment == "break":
+			expr_to_check = "" # No evaluamos líneas puramente estructurales
+			
+		# 3. Usar el motor nativo de Godot para validar la sintaxis de la expresión
+		if expr_to_check != "":
+			var expr = Expression.new()
+			var parse_err = expr.parse(expr_to_check)
+			if parse_err != OK:
+				result.is_valid = false
+				result.line_number = line_num
+				# Obtenemos el error exacto de Godot ("Unexpected token", "Expected expression", etc.)
+				result.error_message = "Sintaxis inválida: " + expr.get_error_text() + " (Revisa caracteres o números sueltos)."
+				return result
+
 		var clean_line = trimmed
 		for symbol in [":", "(", ")", ",", "=", "+", "-", "*", "/", ">", "<", "!", "\t", "[", "]", "."]:
 			clean_line = clean_line.replace(symbol, " ")
@@ -110,5 +143,24 @@ static func validate_code(code: String, level_number: int, custom_allowed_tokens
 				result.line_number = line_num
 				result.error_message = "La instrucción '" + word + "' no está permitida en este nivel."
 				return result
+			
+			if not allowed_tokens.has(word):
+				result.is_valid = false
+				result.line_number = line_num
+				result.error_message = "La instrucción '" + word + "' no está permitida en este nivel."
+				return result
+
+			# --- NUEVA REGLA: Bloquear parámetros en funciones base ---
+			# Si la palabra es un comando del juego o un sensor...
+			if GAME_COMMANDS.has(word) or GAME_SENSORS.has(word):
+				# Quitamos todos los espacios de la línea original para hacer una búsqueda exacta
+				var line_no_spaces = no_comment.replace(" ", "").replace("\t", "")
+				
+				# Si no encontramos la función con sus paréntesis totalmente vacíos, hay un error
+				if not line_no_spaces.contains(word + "()"):
+					result.is_valid = false
+					result.line_number = line_num
+					result.error_message = "La función '" + word + "' no acepta parámetros. Debe escribirse exactamente como: " + word + "()"
+					return result
 
 	return result
