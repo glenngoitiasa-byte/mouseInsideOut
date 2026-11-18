@@ -52,9 +52,12 @@ static func validate_code(code: String, level_number: int, custom_allowed_tokens
 			if raw_line[i] == "\t":
 				current_indent += 1
 			elif raw_line[i] == " ":
-				continue
+				result.is_valid = false
+				result.line_number = line_num
+				result.error_message = "Error de formato: Usa solo la tecla 'Tab' para alinear tu código, no uses la barra espaciadora."
+				return result
 			else:
-				break
+				break # Termina de contar en cuanto encuentra la primera letra
 
 		if require_indent_next and current_indent <= last_indent:
 			result.is_valid = false
