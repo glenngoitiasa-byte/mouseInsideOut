@@ -61,6 +61,12 @@ static func validate_code(code: String, level_number: int, custom_allowed_tokens
 			result.line_number = line_num
 			result.error_message = "Falta tabulación tras una estructura de control o declaración."
 			return result
+		
+		elif not require_indent_next and current_indent > last_indent:
+			result.is_valid = false
+			result.line_number = line_num
+			result.error_message = "Tabulación inesperada. No hay estructura de control previa que la justifique."
+			return result
 
 		require_indent_next = trimmed.ends_with(":")
 		last_indent = current_indent
