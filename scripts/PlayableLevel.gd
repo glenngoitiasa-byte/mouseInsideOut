@@ -8,6 +8,10 @@ var GOAL_CELL: Vector2i = Vector2i(1, 14) # Coordenada de la salida/queso
 const MAX_COLLISIONS: int = 5
 const MAX_CONSOLE_LINES: int = 150
 
+# En PlayableLevel.gd, añade junto a tus otras referencias:
+@onready var btn_pause: Button = $MainHBox/RightVBox/ControlsHBox/BtnExecute
+@onready var btn_step: Button = $MainHBox/RightVBox/ControlsHBox/BtnStep
+
 # Referencias a nodos de UI
 @onready var code_editor: CodeEdit = $MainHBox/RightVBox/CodeEditor
 @onready var console_log: RichTextLabel = $MainHBox/LeftVBox/ConsoleContainer/ConsoleLog
@@ -53,6 +57,10 @@ var run_collisions: int = 0
 var run_steps: int = 0
 var run_cheeses: int = 0
 
+# Añade estas variables de estado:
+var is_paused: bool = false
+var step_requested: bool = false
+
 func _ready() -> void:
 	# 1. Obtener clave de nivel real
 	current_level_number = GlobalState.current_selected_level
@@ -95,6 +103,7 @@ func _ready() -> void:
 	btn_tab2.pressed.connect(func(): _switch_tab(1))
 	btn_tab3.pressed.connect(func(): _switch_tab(2))
 	btn_exit.pressed.connect(_on_btn_exit_pressed)
+	btn_step.pressed.connect(_on_btn_step_pressed)
 	exit_dialog.confirmed.connect(_on_exit_confirmed)
 	
 	_highlight_active_tab()
@@ -278,6 +287,18 @@ func execute_action(action_name: String):
 	if not is_executing or mouse_character == null or level_state == "VICTORY" or level_state == "GAME_OVER":
 		return
 
+	# --- NUEVA LÓGICA DE PAUSA Y PASO A PASO ---
+	# Congelar la ejecución en este frame si está pausado
+	while is_paused and not step_requested:
+		# Si el jugador presiona "Detener (Stop)" mientras está pausado, salimos del bucle
+		if not is_executing: return 
+		await get_tree().process_frame # Espera un fotograma sin hacer nada
+		
+	# Si estábamos pausados y pidieron un paso, consumimos la petición para volver a pausar en la siguiente acción
+	if step_requested:
+		step_requested = false
+	# -------------------------------------------
+
 	var speed_scale: float = max(speed_slider.value, 0.1)
 
 	match action_name:
@@ -336,23 +357,39 @@ func _is_wall(cell_pos: Vector2i) -> bool:
 	return tile_data.get_collision_polygons_count(0) > 0
 
 func _on_btn_execute_pressed() -> void:
-	if is_executing: return
-	var user_code: String = code_editor.text.strip_edges()
-	if user_code.is_empty():
-		append_console("[ERROR] El editor está vacío.")
-		return
+	# ESTADO 1: No está ejecutándose -> Iniciar el código
+	if not is_executing:
+		var user_code: String = code_editor.text.strip_edges()
+		if user_code.is_empty():
+			append_console("[ERROR] El editor está vacío.")
+			return
+			
+		_save_current_level_codes_to_disk()
+		append_console("[SISTEMA] Código guardado correctamente.")
 		
-	# 1. Guardar el código en disco automáticamente al ejecutar
-	_save_current_level_codes_to_disk()
-	append_console("[SISTEMA] Código guardado correctamente.")
-	
-	# 2. Reiniciar contadores de la ejecución
-	run_collisions = 0
-	run_steps = 0
-	run_cheeses = 0
-	
-	_reset_to_entrance()
-	_compile_and_run(user_code)
+		run_collisions = 0
+		run_steps = 0
+		run_cheeses = 0
+		
+		_reset_to_entrance()
+		
+		# Cambiar la apariencia del botón a estado de Pausa
+		btn_execute.text = "Pausar" 
+		# (Opcional) btn_execute.icon = load("res://assets/ui/icon_pause.png")
+		
+		_compile_and_run(user_code)
+		
+	# ESTADO 2 y 3: Ya se está ejecutando -> Alternar Pausa/Reanudar
+	else:
+		is_paused = not is_paused
+		if is_paused:
+			append_console("[DEPURACIÓN] Ejecución pausada.")
+			btn_execute.text = "Reanudar"
+			# (Opcional) btn_execute.icon = load("res://assets/ui/icon_play.png")
+		else:
+			append_console("[DEPURACIÓN] Ejecución reanudada.")
+			btn_execute.text = "Pausar"
+			# (Opcional) btn_execute.icon = load("res://assets/ui/icon_pause.png")
 
 # res://scenes/PlayableLevel.gd (Añadir constante de nivel actual)
 @export var current_level_number: int = 3 # Nivel activo para filtrar instrucciones
@@ -449,6 +486,25 @@ func _reset_execution_state() -> void:
 	current_execution_id += 1
 	is_executing = false
 	code_editor.editable = true
+	
+	# Restaurar variables de depuración
+	is_paused = false
+	step_requested = false
+	
+	# Restaurar el botón principal a su estado original
+	if btn_execute != null: 
+		btn_execute.text = "Ejecutar"
+		# (Opcional) btn_execute.icon = load("res://assets/ui/icon_execute.png")
+
+func _on_btn_step_pressed() -> void:
+	if not is_executing: return
+	
+	if not is_paused:
+		# Si le dan a "Avanzar" mientras corre, lo pausamos primero
+		_on_btn_execute_pressed()
+	
+	# Solicitamos un solo paso
+	step_requested = true
 
 func _on_btn_stop_pressed() -> void:
 	if is_executing:
