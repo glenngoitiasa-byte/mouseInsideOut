@@ -7,6 +7,12 @@
 [ext_resource type="Texture2D" uid="uid://n0thhisiu301" path="res://assets/sprites/nv3.png" id="4_4mfww"]
 [ext_resource type="Texture2D" uid="uid://bpssklcajxm8b" path="res://assets/sprites/nv4.png" id="5_ublle"]
 
+[sub_resource type="Curve2D" id="Curve2D_28enl"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 183, 541, 17.523651, 58.563995, -17.523651, -58.563995, 439, 480, -93.170006, -106.48001, 93.170006, 106.48001, 824, 580, 96.74796, 126.44501, -96.74796, -126.44501, 1028, 318, 45.68654, 86.51501, -45.68654, -86.51501, 510, 195, 0, 0, 0, 0, 1026, 71)
+}
+point_count = 6
+
 [node name="LevelMap" type="Control" unique_id=344719469]
 layout_mode = 3
 anchors_preset = 15
@@ -83,10 +89,10 @@ offset_bottom = 516.0
 texture_normal = ExtResource("2_e7mj4")
 
 [node name="LevelNode2" type="TextureButton" parent="LevelNodes" unique_id=736506143]
-offset_left = 742.0
-offset_top = 572.0
-offset_right = 782.0
-offset_bottom = 612.0
+offset_left = 864.0
+offset_top = 512.0
+offset_right = 904.0
+offset_bottom = 552.0
 texture_normal = ExtResource("3_28enl")
 
 [node name="LevelNode3" type="TextureButton" parent="LevelNodes" unique_id=1817455684]
@@ -110,10 +116,6 @@ offset_right = 1022.0
 offset_bottom = 109.0
 texture_normal = ExtResource("5_ublle")
 
-[node name="MouseAvatar" type="Sprite2D" parent="." unique_id=1365263509]
-position = Vector2(91, 508)
-texture = ExtResource("2_4jybi")
-
 [node name="BtnStartLevel" type="Button" parent="." unique_id=665669062]
 layout_mode = 1
 anchors_preset = -1
@@ -127,3 +129,18 @@ offset_right = -0.45602417
 offset_bottom = -3.1360168
 theme_override_font_sizes/font_size = 22
 text = "Iniciar Nivel"
+
+[node name="Path2D" type="Path2D" parent="." unique_id=1131360544]
+position = Vector2(-56, 11)
+scale = Vector2(1.0516043, 1)
+curve = SubResource("Curve2D_28enl")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Path2D" unique_id=1888825260]
+position = Vector2(183, 541)
+rotation = -0.008905887
+
+[node name="MouseAvatar" type="Sprite2D" parent="Path2D/PathFollow2D" unique_id=1365263509]
+position = Vector2(-0.4307022, 0.9961548)
+rotation = 0.008905886
+scale = Vector2(1.0095581, 0.99999994)
+texture = ExtResource("2_4jybi")

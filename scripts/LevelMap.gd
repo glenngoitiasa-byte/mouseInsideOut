@@ -10,7 +10,8 @@ const PLAYABLE_LEVEL_SCENE = "res://scenes/playable_level.tscn"
 @onready var label_stats: Label = $InfoPanel/VBox/LabelStats
 @onready var btn_start_level: Button = $BtnStartLevel
 @onready var btn_back: Button = $TopBar/BtnBack
-@onready var mouse_avatar: Node2D = $MouseAvatar
+@onready var mouse_avatar: Node2D = $Path2D/MouseAvatar
+@onready var path_follow: PathFollow2D = $Path2D/PathFollow2D
 
 # Referencia a las paradas/niveles
 @onready var level_nodes: Array[Node] = $LevelNodes.get_children()
@@ -26,7 +27,7 @@ var levels_info: Dictionary = {
 		de movimiento y secuencia.",
 		"best_steps": 12,
 		"cheeses": "1/1",
-		"pos": Vector2(350, 480)
+		"ratio": 0.0
 	},
 	2: {
 		"title": "Nivel 2: La Encrucijada",
@@ -34,7 +35,7 @@ var levels_info: Dictionary = {
 		y utiliza los bucles while .",
 		"best_steps": 24,
 		"cheeses": "2/2",
-		"pos": Vector2(800, 600)
+		"ratio": 0.2
 	},
 	3: {
 		"title": "Nivel 3: Niebla en la Penumbra",
@@ -43,14 +44,14 @@ var levels_info: Dictionary = {
 		radial.",
 		"best_steps": 45,
 		"cheeses": "3/3",
-		"pos": Vector2(950, 300)
+		"ratio": 0.4
 	},
 	4: {
 		"title": "Nivel 4: Resuelve la contraseña",
 		"desc": "Consigue las contraseñas.",
 		"best_steps": "---",
 		"cheeses": "0/3",
-		"pos": Vector2(380, 180)
+		"ratio": 0.6
 	},
 	5: {
 		"title": "Nivel 5: Prueba tus habilidades",
@@ -58,7 +59,7 @@ var levels_info: Dictionary = {
 		radial. Consigue las contraseñas.",
 		"best_steps": "---",
 		"cheeses": "0/3",
-		"pos": Vector2(380, 180)
+		"ratio": 1.0
 	}
 }
 
@@ -125,23 +126,27 @@ func _select_level(level_num: int) -> void:
 	current_target_level = level_num
 	_update_info_panel(level_num)
 	
-	var target_pos: Vector2 = levels_info[level_num]["pos"]
+	var target_ratio: float = levels_info[level_num]["ratio"]
 	
 	is_moving = true
 	btn_start_level.disabled = true
 	
-	# Transición fluida del avatar del ratón
-	var tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	tween.tween_property(mouse_avatar, "global_position", target_pos, 0.8)
+	# Transición sobre el riel
+	var tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	# Calculamos el tiempo basado en la distancia (opcional, para que niveles lejanos tarden más)
+	var travel_time = abs(path_follow.progress_ratio - target_ratio) * 2.5 
+	
+	tween.tween_property(path_follow, "progress_ratio", target_ratio, travel_time)
 	
 	await tween.finished
 	is_moving = false
 	btn_start_level.disabled = false
 
+# Modifica la función de salto instantáneo
 func _move_mouse_to_level_instant(level_num: int) -> void:
 	current_target_level = level_num
 	if levels_info.has(level_num):
-		mouse_avatar.global_position = levels_info[level_num]["pos"]
+		path_follow.progress_ratio = levels_info[level_num]["ratio"]
 
 func _on_btn_start_level_pressed() -> void:
 	GlobalState.is_random_mode = false
